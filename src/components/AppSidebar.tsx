@@ -20,6 +20,26 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useUI } from "@/context/UIContext";
 import { useAuth } from "@/context/AuthContext";
+import { usePWA } from "@/context/PWAContext";
+import { Download } from "lucide-react";
+
+// Helper Component for Install Button
+const PWAInstallButton = () => {
+  const { isInstallable, installApp } = usePWA();
+  if (!isInstallable) return null;
+
+  return (
+    <div className="mb-4">
+      <Button
+        onClick={installApp}
+        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white border-0"
+      >
+        <Download className="mr-2 h-4 w-4" />
+        Install App
+      </Button>
+    </div>
+  );
+};
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -95,6 +115,9 @@ const AppSidebar: React.FC = () => {
         </nav>
 
         <div className="absolute bottom-6 left-0 w-full px-6">
+          {/* Install App Button (Visible only if installable) */}
+          <PWAInstallButton />
+
           {currentUser ? (
             <div className="group relative overflow-hidden rounded-3xl border border-border bg-muted/50 p-4 transition-all hover:bg-muted hover:border-primary/20">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -140,12 +163,14 @@ const AppSidebar: React.FC = () => {
       </div>
 
       {/* Overlay when sidebar is open */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-[65] bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      {
+        isOpen && (
+          <div
+            className="fixed inset-0 z-[65] bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setIsOpen(false)}
+          />
+        )
+      }
     </>
   );
 };

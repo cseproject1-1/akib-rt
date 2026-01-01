@@ -8,6 +8,8 @@ import { UIProvider } from "@/context/UIContext";
 import { GoalProvider } from "@/context/GoalContext";
 import { AIProvider } from "@/context/AIContext";
 
+import { PWAProvider } from "@/context/PWAContext";
+
 export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
@@ -16,7 +18,9 @@ export const Providers: React.FC<{ children: React.ReactNode }> = ({ children })
           <GoalProvider>
             <TaskProvider>
               <AIProvider>
-                {children}
+                <PWAProvider>
+                  {children}
+                </PWAProvider>
               </AIProvider>
             </TaskProvider>
           </GoalProvider>
