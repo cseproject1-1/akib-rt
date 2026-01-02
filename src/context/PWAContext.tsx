@@ -34,7 +34,12 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setDeferredPrompt(e as BeforeInstallPromptEvent);
 
             // Check if user previously dismissed the prompt
-            const hasDismissed = localStorage.getItem("rt_pwa_dismissed");
+            let hasDismissed = false;
+            try {
+                hasDismissed = localStorage.getItem("rt_pwa_dismissed") === "true";
+            } catch (err) {
+                console.warn("LocalStorage access denied:", err);
+            }
 
             // Only show if NOT dismissed
             if (!hasDismissed) {
@@ -74,7 +79,11 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const dismissPrompt = () => {
         setShowPrompt(false);
         // Permanently dismiss for this browser
-        localStorage.setItem("rt_pwa_dismissed", "true");
+        try {
+            localStorage.setItem("rt_pwa_dismissed", "true");
+        } catch (err) {
+            console.warn("LocalStorage write failed:", err);
+        }
     };
 
     const isInstallable = !!deferredPrompt && !isInstalled;

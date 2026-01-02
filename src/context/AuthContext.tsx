@@ -58,7 +58,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // (e.g. they login, logout, or the app refreshes and restores their session).
   useEffect(() => {
     // Enforce local persistence (keep user logged in even after browser close)
+    // Enforce local persistence (keep user logged in even after browser close)
+    // Note: Some in-app browsers (like Messenger) might block localStorage/IndexedDB.
+    // In those cases, we fall back to session or memory persistence seamlessly or just catch the error.
     setPersistence(auth, browserLocalPersistence)
+      .catch((error) => {
+        console.warn("Auth Persistence Error (falling back to default):", error);
+        // We continue anyway; Firebase will standardly use temporary persistence if local fails
+      })
       .then(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
           // Update our local state with the user object (or null)
@@ -104,10 +111,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         });
         // Clean up the listener when the component unmounts
         return () => unsubscribe();
-      })
-      .catch((error) => {
-        console.error("Auth Persistence Error:", error);
-        setIsLoading(false);
       });
   }, []);
 

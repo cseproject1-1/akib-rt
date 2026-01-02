@@ -70,7 +70,13 @@ export const NotificationManager: React.FC = () => {
     // Schedule upcoming task notifications
     useEffect(() => {
         if (!("Notification" in window) || Notification.permission !== "granted") return;
-        if (localStorage.getItem("rt_notifications_enabled") !== "true") return;
+
+        let notificationsEnabled = false;
+        try {
+            notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
+        } catch (e) { }
+
+        if (!notificationsEnabled) return;
         if (tasks.length === 0) return;
 
         const now = new Date();
@@ -129,7 +135,13 @@ export const NotificationManager: React.FC = () => {
         const checkTasks = () => {
             if (Notification.permission !== "granted") return;
             // Check app-level preference
-            if (localStorage.getItem("rt_notifications_enabled") !== "true") return;
+            let notificationsEnabled = false;
+            try {
+                notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
+            } catch (error) {
+                // If localStorage is blocked, assume disabled or handle gracefully
+            }
+            if (!notificationsEnabled) return;
 
             const now = new Date();
             const todayStr = format(now, "EEE").toUpperCase();
@@ -162,11 +174,20 @@ export const NotificationManager: React.FC = () => {
     useEffect(() => {
         const sendDailyMotivation = async () => {
             if (Notification.permission !== "granted" || !user) return;
+
             // Check app-level preference
-            if (localStorage.getItem("rt_notifications_enabled") !== "true") return;
+            let notificationsEnabled = false;
+            let lastMotivationDate = null;
+            try {
+                notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
+                lastMotivationDate = localStorage.getItem("lastMotivationDate");
+            } catch (error) {
+                // Ignore storage errors
+            }
+
+            if (!notificationsEnabled) return;
 
             const today = format(new Date(), "yyyy-MM-dd");
-            const lastMotivationDate = localStorage.getItem("lastMotivationDate");
             if (lastMotivationDate === today) return;
 
             try {
@@ -186,7 +207,9 @@ export const NotificationManager: React.FC = () => {
 
                 if (data.motivation) {
                     showNotification("Daily Motivation ✨", data.motivation, "daily-motivation");
-                    localStorage.setItem("lastMotivationDate", today);
+                    try {
+                        localStorage.setItem("lastMotivationDate", today);
+                    } catch (e) { }
                 }
             } catch (error) {
                 console.error("Failed to get motivation:", error);
