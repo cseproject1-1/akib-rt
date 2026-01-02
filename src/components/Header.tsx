@@ -23,14 +23,14 @@ const Header: React.FC = () => {
   return (
     <>
       <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur-xl md:px-12">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <img
             src="/logo.jpg"
             alt="RT Logo"
             className="h-10 w-10 rounded-xl shadow-lg shadow-purple-500/20"
           />
           <h1 className="text-xl font-bold tracking-tight text-foreground hidden sm:block">Routine Tracker</h1>
-        </div>
+        </Link>
 
         <div className="flex items-center gap-3">
           <Button

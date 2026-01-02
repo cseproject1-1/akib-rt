@@ -5,7 +5,8 @@ import { Modal } from "./ui/Modal";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { useTask, Task } from "@/context/TaskContext";
-import { Save, Download, LayoutTemplate, Star } from "lucide-react";
+import { useAI } from "@/context/AIContext";
+import { Save, Download, LayoutTemplate, Star, Sparkles } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -21,7 +22,15 @@ interface TemplatesModalProps {
 
 const TemplatesModal: React.FC<TemplatesModalProps> = ({ isOpen, onClose }) => {
   const { saveAsTemplate, applyTemplate, templates, replaceAllTasks } = useTask();
+  const { sendMessage, isLoading: isAiLoading } = useAI();
   const [newTemplateName, setNewTemplateName] = useState("");
+
+  const handleMagicRoutine = async () => {
+    if (confirm("Generate a magical morning routine? This will append tasks to your current schedule.")) {
+      await sendMessage("Generate a 3-step morning productivity routine for me with time blocks.");
+      onClose();
+    }
+  };
 
   const handleSave = () => {
     if (newTemplateName.trim()) {
@@ -131,6 +140,26 @@ const TemplatesModal: React.FC<TemplatesModalProps> = ({ isOpen, onClose }) => {
             <span className="text-[10px] font-bold uppercase tracking-widest">Global Presets</span>
           </div>
           <div className="grid grid-cols-2 gap-3">
+            {/* Magic Routine Button */}
+            <button
+              onClick={handleMagicRoutine}
+              disabled={isAiLoading}
+              className="col-span-2 flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 hover:border-purple-500/40 transition-all text-left group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                  <Sparkles className={cn("h-5 w-5", isAiLoading && "animate-spin")} />
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-white block">Magic Routine</span>
+                  <span className="text-[10px] font-medium text-purple-400 uppercase opacity-80">AI-Generated</span>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-white/50 group-hover:text-white transition-colors">
+                {isAiLoading ? "Generating..." : "Generate"}
+              </span>
+            </button>
+
             <button
               onClick={() => applyPreset("Work Day", WORK_DAY_PRESET)}
               className="flex flex-col items-start p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.05] transition-all text-left"

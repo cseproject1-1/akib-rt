@@ -28,8 +28,8 @@ import { auth, db } from "@/lib/firebase";
 // ----------------------------------------------------------------------------
 interface AuthContextType {
   user: User | null;                          // The current logged-in user object (or null)
-  login: (email: string, pass: string) => Promise<void>; // Function to log in
-  register: (email: string, pass: string) => Promise<void>; // Function to create account
+  login: (username: string, pass: string) => Promise<void>; // Function to log in
+  register: (username: string, pass: string) => Promise<void>; // Function to create account
   loginWithGoogle: () => Promise<void>;       // Function for Google Sign-in
   sendEmailVerification: () => Promise<void>; // Function to send verification email
   logout: () => Promise<void>;                // Function to log out
@@ -72,22 +72,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
               if (!userDoc.exists()) {
                 // Generate a unique-ish username: @Name1234
-                const baseName = (currentUser.displayName || currentUser.email?.split('@')[0] || 'User').replace(/\s+/g, '');
+                const baseName = (currentUser.displayName || "User").replace(/\s+/g, '');
                 const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 4 digit random number
                 const username = `@${baseName}${randomSuffix}`;
 
                 await setDoc(userDocRef, {
-                  email: currentUser.email,
-                  displayName: currentUser.displayName || currentUser.email?.split('@')[0] || 'User',
+                  email: currentUser.email, // This might be fake now
+                  displayName: currentUser.displayName || baseName,
                   username: username, // New Unique Username
                   photoURL: currentUser.photoURL,
                   score: 0,
                   createdAt: new Date().toISOString(),
-                  lastActive: new Date().toISOString()
+                  lastActive: new Date().toISOString(),
+                  isPublic: true
                 });
               } else if (!userDoc.data().username) {
-                // If user exists but HAS NO username (legacy user), give them one
-                const baseName = (currentUser.displayName || currentUser.email?.split('@')[0] || 'User').replace(/\s+/g, '');
+                // Legacy support
+                const baseName = (currentUser.displayName || "User").replace(/\s+/g, '');
                 const randomSuffix = Math.floor(1000 + Math.random() * 9000);
                 const username = `@${baseName}${randomSuffix}`;
 
@@ -114,34 +115,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // ----------------------------------------------------------------------------
   // We wrap Firebase functions to keep our UI components clean.
 
-  const login = async (email: string, pass: string) => {
+  const FAKE_DOMAIN = "@routinetracker.local";
+
+  const login = async (username: string, pass: string) => {
+    // If user enters an email by mistake, allow it. Otherwise append fake domain.
+    const email = username.includes("@") ? username : `${username}${FAKE_DOMAIN}`;
     await signInWithEmailAndPassword(auth, email, pass);
   };
 
-  const register = async (email: string, pass: string) => {
+  const register = async (username: string, pass: string) => {
+    const email = `${username}${FAKE_DOMAIN}`;
     const result = await createUserWithEmailAndPassword(auth, email, pass);
 
     // Create User Profile in Firestore
     if (result.user) {
       try {
-        const baseName = (result.user.email?.split('@')[0] || 'User').replace(/\s+/g, '');
-        const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-        const username = `@${baseName}${randomSuffix}`;
+        // Use the raw username for display name initially
+        const displayName = username;
+        const uniqueUsername = `@${username.replace(/\s+/g, '')}`;
 
         await setDoc(doc(db, "users", result.user.uid), {
           email: result.user.email,
-          displayName: result.user.email?.split('@')[0] || 'User',
-          username: username,
+          displayName: displayName,
+          username: uniqueUsername,
           score: 0,
           createdAt: new Date().toISOString(),
-          lastActive: new Date().toISOString()
+          lastActive: new Date().toISOString(),
+          isPublic: true
         });
       } catch (e) {
         console.error("Error creating profile on register:", e);
       }
 
-      // Automatically send a verification email when a new user registers
-      await firebaseSendEmailVerification(result.user);
+      // No email verification for "fake" emails
     }
   };
 

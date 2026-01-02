@@ -39,20 +39,30 @@ export default function LeaderboardPage() {
             streak?: number;
             completionRate?: number;
             totalCompleted?: number;
+            isPublic?: boolean;
           };
 
-          users.push({
-            name: data.displayName || "Anonymous",
-            username: data.username || "User",
-            avatar: data.photoURL,
-            rank: rank++,
-            isCurrentUser: user?.uid === doc.id,
-            streak: data.streak || 0,
-            completionRate: data.completionRate || 0,
-            totalCompleted: data.totalCompleted || 0,
-            score: data.score || 0,
-          });
+          const isPublic = data.isPublic ?? true; // Default to public
+
+          // Only include if public
+          if (isPublic) {
+            users.push({
+              name: data.displayName || "Anonymous",
+              username: data.username || "User",
+              avatar: data.photoURL,
+              rank: 0, // rank assigned after sort
+              isCurrentUser: user?.uid === doc.id,
+              streak: data.streak || 0,
+              completionRate: data.completionRate || 0,
+              totalCompleted: data.totalCompleted || 0,
+              score: data.score || 0,
+            });
+          }
         });
+
+        // Re-sort and assign ranks (client-side sort ensures correctness after filter)
+        users.sort((a, b) => (b.score || 0) - (a.score || 0));
+        users.forEach((u, index) => u.rank = index + 1);
 
         setLeaderboardData(users);
       } catch (error: any) {

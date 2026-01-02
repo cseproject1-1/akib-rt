@@ -2,19 +2,22 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { LoginScreen } from "@/components/LoginScreen";
+import { LandingPage } from "@/components/LandingPage";
 import { Header } from "@/components/Header";
 import { ProgressBar } from "@/components/ProgressBar";
 import { DayNavigation } from "@/components/DayNavigation";
 import { TimeBlock } from "@/components/TimeBlock";
 import { TaskModal } from "@/components/TaskModal";
+import { OnboardingTour } from "@/components/OnboardingTour";
 import { TimeBlock as TimeBlockType, Task, useTask } from "@/context/TaskContext";
+import { Button } from "@/components/ui/Button";
+import { Plus } from "lucide-react";
 
 const TIME_BLOCKS: TimeBlockType[] = ["Dawn", "Morning", "Noon", "Afternoon", "Evening", "Night"];
 
 export default function Home() {
   const { user, isLoading: isAuthLoading } = useAuth();
-  const { loading: isTasksLoading } = useTask();
+  const { loading: isTasksLoading, totalTasksToday } = useTask();
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | undefined>(undefined);
 
@@ -28,7 +31,7 @@ export default function Home() {
   }
 
   if (!user) {
-    return <LoginScreen />;
+    return <LandingPage />;
   }
 
   const handleAddTask = () => {
@@ -51,6 +54,25 @@ export default function Home() {
 
           <DayNavigation />
 
+          {/* Empty State Banner */}
+          {(!isTasksLoading && totalTasksToday === 0) && (
+            <div className="my-6 relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 p-8 border border-purple-500/20 text-center sm:text-left">
+              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-bold text-foreground">Ready to conquer the day?</h3>
+                  <p className="text-muted-foreground max-w-md">Your schedule is clear. Start from scratch or use a proved template to hit the ground running.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button onClick={handleAddTask} className="bg-foreground text-background hover:opacity-90 font-bold rounded-xl h-12 px-6">
+                    <Plus className="w-4 h-4 mr-2" /> Create Routine
+                  </Button>
+                </div>
+              </div>
+              {/* Background Decor */}
+              <div className="absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 bg-purple-500/10 blur-[80px] rounded-full pointer-events-none" />
+            </div>
+          )}
+
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
             {TIME_BLOCKS.map((block) => (
               <TimeBlock
@@ -61,6 +83,8 @@ export default function Home() {
               />
             ))}
           </div>
+
+          <OnboardingTour />
         </div>
       </main>
 

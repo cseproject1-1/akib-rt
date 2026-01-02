@@ -37,7 +37,10 @@ const formatTime = (date: Date) => {
 };
 
 export const AIChat: React.FC = () => {
-    const { messages, isLoading, isOpen, setIsOpen, sendMessage, clearMessages } = useAI();
+    const { messages, isLoading, isOpen, setIsOpen, sendMessage, clearMessages, aiEnabled } = useAI();
+
+    if (!aiEnabled) return null;
+
     const [input, setInput] = useState("");
     const [isUploaderOpen, setIsUploaderOpen] = useState(false);
     const [copiedId, setCopiedId] = useState<string | null>(null);

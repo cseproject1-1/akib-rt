@@ -33,8 +33,14 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             e.preventDefault();
             setDeferredPrompt(e as BeforeInstallPromptEvent);
 
-            // Delay prompt slightly
-            setTimeout(() => setShowPrompt(true), 2000);
+            // Check if user previously dismissed the prompt
+            const hasDismissed = localStorage.getItem("rt_pwa_dismissed");
+
+            // Only show if NOT dismissed
+            if (!hasDismissed) {
+                // Delay prompt slightly
+                setTimeout(() => setShowPrompt(true), 2000);
+            }
         };
 
         // Detect successful installation
@@ -67,7 +73,8 @@ export const PWAProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     const dismissPrompt = () => {
         setShowPrompt(false);
-        // We don't permanently dismiss here because the user might want to install later via sidebar
+        // Permanently dismiss for this browser
+        localStorage.setItem("rt_pwa_dismissed", "true");
     };
 
     const isInstallable = !!deferredPrompt && !isInstalled;

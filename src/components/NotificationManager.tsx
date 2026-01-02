@@ -70,6 +70,7 @@ export const NotificationManager: React.FC = () => {
     // Schedule upcoming task notifications
     useEffect(() => {
         if (!("Notification" in window) || Notification.permission !== "granted") return;
+        if (localStorage.getItem("rt_notifications_enabled") !== "true") return;
         if (tasks.length === 0) return;
 
         const now = new Date();
@@ -127,6 +128,8 @@ export const NotificationManager: React.FC = () => {
     useEffect(() => {
         const checkTasks = () => {
             if (Notification.permission !== "granted") return;
+            // Check app-level preference
+            if (localStorage.getItem("rt_notifications_enabled") !== "true") return;
 
             const now = new Date();
             const todayStr = format(now, "EEE").toUpperCase();
@@ -159,6 +162,8 @@ export const NotificationManager: React.FC = () => {
     useEffect(() => {
         const sendDailyMotivation = async () => {
             if (Notification.permission !== "granted" || !user) return;
+            // Check app-level preference
+            if (localStorage.getItem("rt_notifications_enabled") !== "true") return;
 
             const today = format(new Date(), "yyyy-MM-dd");
             const lastMotivationDate = localStorage.getItem("lastMotivationDate");

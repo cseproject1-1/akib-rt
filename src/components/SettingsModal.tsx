@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Modal } from "./ui/Modal";
 import { Button } from "./ui/Button";
 import { useTask } from "@/context/TaskContext";
@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useAI, AIPlatform } from "@/context/AIContext";
 import { Bell, Download, Upload, Trash2, LogOut, ShieldAlert, Database, Bot, Sparkles } from "lucide-react";
 import { db } from "@/lib/firebase";
-import { doc, writeBatch } from "firebase/firestore";
+import { doc, writeBatch, getDoc, updateDoc } from "firebase/firestore";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -20,6 +20,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
   const { aiEnabled, setAiEnabled, aiPlatform, setAiPlatform } = useAI();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isPublic, setIsPublic] = React.useState(true);
+
+  React.useEffect(() => {
+    if (isOpen && user) {
+      getDoc(doc(db, "users", user.uid)).then(snap => {
+        if (snap.exists()) {
+          setIsPublic(snap.data().isPublic ?? true);
+        }
+      });
+    }
+  }, [isOpen, user]);
+
+  const togglePublicProfile = async (enabled: boolean) => {
+    setIsPublic(enabled);
+    if (user) {
+      await updateDoc(doc(db, "users", user.uid), { isPublic: enabled });
+    }
+  };
 
   const handleBackup = () => {
     const data = {
@@ -91,15 +109,38 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     }
   }
 
-  const handleRequestNotification = () => {
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
+  const [areNotificationsEnabled, setAreNotificationsEnabled] = useState(false);
+
+  useEffect(() => {
+    // Check permission
     if ("Notification" in window) {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          new Notification("RT - Routine Tracker", { body: "Notifications enabled!" });
-        }
-      });
+      setNotificationPermission(Notification.permission);
     }
-  }
+    // Check app-level preference
+    const storedPref = localStorage.getItem("rt_notifications_enabled");
+    setAreNotificationsEnabled(storedPref === "true");
+  }, []);
+
+  const handleToggleNotifications = (enabled: boolean) => {
+    if (enabled) {
+      // User wants to ENABLE
+      if ("Notification" in window) {
+        Notification.requestPermission().then((permission) => {
+          setNotificationPermission(permission);
+          if (permission === "granted") {
+            setAreNotificationsEnabled(true);
+            localStorage.setItem("rt_notifications_enabled", "true");
+            new Notification("RT - Routine Tracker", { body: "Notifications enabled!" });
+          }
+        });
+      }
+    } else {
+      // User wants to DISABLE
+      setAreNotificationsEnabled(false);
+      localStorage.setItem("rt_notifications_enabled", "false");
+    }
+  };
 
   const SettingSection = ({ icon: Icon, title, description, children }: any) => (
     <div className="group space-y-4 p-6 rounded-3xl bg-muted/50 border border-border transition-all hover:bg-muted">
@@ -138,10 +179,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       onClick={() => setAiPlatform(platform)}
       disabled={!aiEnabled}
       className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all ${aiPlatform === platform && aiEnabled
-          ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
-          : aiEnabled
-            ? "bg-muted hover:bg-muted-foreground/20 text-foreground"
-            : "bg-muted/50 text-muted-foreground cursor-not-allowed opacity-50"
+        ? "bg-purple-600 text-white shadow-lg shadow-purple-500/20"
+        : aiEnabled
+          ? "bg-muted hover:bg-muted-foreground/20 text-foreground"
+          : "bg-muted/50 text-muted-foreground cursor-not-allowed opacity-50"
         }`}
     >
       {icon}
@@ -189,12 +230,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           title="Notifications"
           description="Get reminded about your tasks before they start. Never miss a routine again."
         >
-          <Button
-            className="rounded-2xl bg-muted hover:bg-muted-foreground/20 text-foreground border-0 px-6"
-            onClick={handleRequestNotification}
+          <SettingSection
+            icon={Bell}
+            title="Notifications"
+            description="Get reminded about your tasks before they start. Never miss a routine again."
           >
-            Enable Reminders
-          </Button>
+            <div className="w-full flex items-center justify-between">
+              <span className="text-sm font-medium text-foreground">Enable Task Reminders</span>
+              <ToggleSwitch
+                enabled={notificationPermission === "granted" && areNotificationsEnabled}
+                onChange={handleToggleNotifications}
+              />
+            </div>
+            {notificationPermission === "denied" && (
+              <p className="text-xs text-red-400 mt-2">
+                ⚠️ Notification permission is blocked in your browser settings. Please enable it manually to receive reminders.
+              </p>
+            )}
+          </SettingSection>
         </SettingSection>
 
         <SettingSection
@@ -228,6 +281,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           title="Account & Safety"
           description="Manage your account session and sensitive data. Actions here may be permanent."
         >
+          {/* Public Profile Toggle */}
+          <div className="w-full flex items-center justify-between p-2 rounded-xl bg-purple-500/5 mb-2">
+            <div>
+              <span className="text-sm font-bold text-foreground block">Public Profile</span>
+              <span className="text-xs text-muted-foreground">Show in leaderboard</span>
+            </div>
+            <ToggleSwitch enabled={isPublic} onChange={togglePublicProfile} />
+          </div>
+
           <Button
             className="rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border-0 px-6 gap-2 font-bold"
             onClick={handleClearData}

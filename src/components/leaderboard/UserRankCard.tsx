@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { cn } from "@/components/ui/Button";
-import { TrendingUp, Target, Flame, CheckCircle } from "lucide-react";
+import { cn, Button } from "@/components/ui/Button";
+import { TrendingUp, Target, Flame, CheckCircle, Share2 } from "lucide-react";
 import { useTask } from "@/context/TaskContext";
 
 interface UserRankCardProps {
@@ -18,6 +18,25 @@ export const UserRankCard: React.FC<UserRankCardProps> = ({ rank, totalUsers }) 
     const totalCompleted = tasks.reduce((sum, t) => sum + t.completionHistory.length, 0);
 
     const percentile = totalUsers > 0 ? Math.round(((totalUsers - rank) / totalUsers) * 100) : 0;
+
+    const handleShare = async () => {
+        const shareData = {
+            title: 'My RT Ranking',
+            text: `I'm ranked #${rank} on Routine Tracker with a ${maxStreak}-day streak! 🚀`,
+            url: window.location.origin
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+                alert("Copied to clipboard!");
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     return (
         <div className="relative overflow-hidden rounded-3xl border border-purple-500/30 bg-gradient-to-br from-purple-500/10 via-transparent to-pink-500/10 p-6">
@@ -36,8 +55,18 @@ export const UserRankCard: React.FC<UserRankCardProps> = ({ rank, totalUsers }) 
                             <span className="text-muted-foreground">of {totalUsers}</span>
                         </div>
                     </div>
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30">
-                        <TrendingUp className="h-8 w-8 text-white" />
+                    <div className="flex gap-2">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={handleShare}
+                            className="h-16 w-16 rounded-2xl bg-white/5 hover:bg-white/10 text-white transition-colors"
+                        >
+                            <Share2 className="h-6 w-6" />
+                        </Button>
+                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/30">
+                            <TrendingUp className="h-8 w-8 text-white" />
+                        </div>
                     </div>
                 </div>
 
