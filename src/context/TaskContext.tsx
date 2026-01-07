@@ -128,6 +128,16 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
+    // LOAD FROM CACHE FIRST (Offline Support)
+    try {
+      const cachedTasks = localStorage.getItem(`rt_tasks_${user.uid}`);
+      const cachedTemplates = localStorage.getItem(`rt_templates_${user.uid}`);
+      if (cachedTasks) setTasks(JSON.parse(cachedTasks));
+      if (cachedTemplates) setTemplates(JSON.parse(cachedTemplates));
+    } catch (e) {
+      console.warn("Failed to load cached tasks");
+    }
+
     // References to the Firestore collections
     const tasksRef = collection(db, "users", user.uid, "tasks");
     const templatesRef = collection(db, "users", user.uid, "templates");
@@ -137,8 +147,15 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const fetchedTasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Task));
       setTasks(fetchedTasks);
       setLoading(false);
+
+      // Update Cache
+      try {
+        localStorage.setItem(`rt_tasks_${user.uid}`, JSON.stringify(fetchedTasks));
+      } catch (e) { }
+
     }, (error) => {
       console.error("Firestore Tasks Error:", error);
+      // If offline, we keep the cached data and just stop loading
       setLoading(false);
     });
 
@@ -149,6 +166,11 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         fetchedTemplates[doc.id] = doc.data().tasks as Task[];
       });
       setTemplates(fetchedTemplates);
+
+      // Update Cache
+      try {
+        localStorage.setItem(`rt_templates_${user.uid}`, JSON.stringify(fetchedTemplates));
+      } catch (e) { }
     }, (error) => {
       console.error("Firestore Templates Error:", error);
     });

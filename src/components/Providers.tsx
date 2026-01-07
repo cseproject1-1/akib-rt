@@ -7,7 +7,7 @@ import { TaskProvider } from "@/context/TaskContext";
 import { UIProvider } from "@/context/UIContext";
 import { GoalProvider } from "@/context/GoalContext";
 import { AIProvider } from "@/context/AIContext";
-
+import { NotificationProvider } from "@/context/NotificationContext";
 import { PWAProvider } from "@/context/PWAContext";
 
 export const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -18,9 +18,11 @@ export const Providers: React.FC<{ children: React.ReactNode }> = ({ children })
           <GoalProvider>
             <TaskProvider>
               <AIProvider>
-                <PWAProvider>
-                  {children}
-                </PWAProvider>
+                <NotificationProvider>
+                  <PWAProvider>
+                    {children}
+                  </PWAProvider>
+                </NotificationProvider>
               </AIProvider>
             </TaskProvider>
           </GoalProvider>

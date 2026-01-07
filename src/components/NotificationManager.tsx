@@ -3,11 +3,13 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useTask } from "@/context/TaskContext";
 import { useAuth } from "@/context/AuthContext";
+import { useNotification } from "@/context/NotificationContext";
 import { format, subMinutes, addMinutes, isAfter, isBefore } from "date-fns";
 
 export const NotificationManager: React.FC = () => {
     const { tasks } = useTask();
     const { user } = useAuth();
+    const { addNotification } = useNotification();
     const notifiedTasks = useRef<Set<string>>(new Set());
     const scheduledNotifications = useRef<Set<string>>(new Set());
 
@@ -44,6 +46,9 @@ export const NotificationManager: React.FC = () => {
 
     // Show immediate notification (fallback for when SW not available)
     const showNotification = useCallback((title: string, body: string, tag: string) => {
+        // Add to in-app notification center & show toast
+        addNotification(title, body);
+
         if (Notification.permission !== "granted") return;
 
         // Try service worker first (for offline support)
@@ -65,7 +70,7 @@ export const NotificationManager: React.FC = () => {
                 tag
             });
         }
-    }, []);
+    }, [addNotification]);
 
     // Schedule upcoming task notifications
     useEffect(() => {
@@ -171,9 +176,10 @@ export const NotificationManager: React.FC = () => {
     }, [tasks, showNotification]);
 
     // Daily AI Motivation (online only)
+    // Daily AI Motivation
     useEffect(() => {
         const sendDailyMotivation = async () => {
-            if (Notification.permission !== "granted" || !user) return;
+            if (!user) return;
 
             // Check app-level preference
             let notificationsEnabled = false;
@@ -181,16 +187,30 @@ export const NotificationManager: React.FC = () => {
             try {
                 notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
                 lastMotivationDate = localStorage.getItem("lastMotivationDate");
-            } catch (error) {
-                // Ignore storage errors
-            }
+            } catch (error) { }
 
             if (!notificationsEnabled) return;
 
             const today = format(new Date(), "yyyy-MM-dd");
             if (lastMotivationDate === today) return;
 
+            // Offline Fallback Motivations
+            const offlineMotivations = [
+                "Consistency is key! unexpected journey starts with a single step.",
+                "You are capable of amazing things. Keep pushing!",
+                "Small progress is still progress. Keep going!",
+                "Your potential is endless. Go do what you were created to do.",
+                "Discipline is choosing between what you want now and what you want most."
+            ];
+
             try {
+                if (!navigator.onLine) {
+                    const randomMsg = offlineMotivations[Math.floor(Math.random() * offlineMotivations.length)];
+                    showNotification("Daily Motivation ✨", randomMsg, "daily-motivation");
+                    localStorage.setItem("lastMotivationDate", today);
+                    return;
+                }
+
                 const todayStr = format(new Date(), "EEE").toUpperCase();
                 const todayTasks = tasks.filter(t => t.days?.includes(todayStr));
 
@@ -203,20 +223,27 @@ export const NotificationManager: React.FC = () => {
                     }),
                 });
 
+                if (!response.ok) throw new Error("API Failed");
+
                 const data = await response.json();
 
                 if (data.motivation) {
                     showNotification("Daily Motivation ✨", data.motivation, "daily-motivation");
-                    try {
-                        localStorage.setItem("lastMotivationDate", today);
-                    } catch (e) { }
+                    localStorage.setItem("lastMotivationDate", today);
                 }
             } catch (error) {
                 console.error("Failed to get motivation:", error);
+                // Fallback on error
+                const randomMsg = offlineMotivations[Math.floor(Math.random() * offlineMotivations.length)];
+                showNotification("Daily Motivation ✨", randomMsg, "daily-motivation");
+                try {
+                    localStorage.setItem("lastMotivationDate", today);
+                } catch (e) { }
             }
         };
 
-        const timeout = setTimeout(sendDailyMotivation, 8000);
+        // Run after a short delay to ensure app is ready
+        const timeout = setTimeout(sendDailyMotivation, 5000);
         return () => clearTimeout(timeout);
     }, [tasks, user, showNotification]);
 

@@ -57,6 +57,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // This useEffect sets up a listener that runs whenever the user's sign-in state changes
   // (e.g. they login, logout, or the app refreshes and restores their session).
   useEffect(() => {
+    // CHECK FOR DEV MODE (Crytonix)
+    const isDevMode = localStorage.getItem("rt_dev_mode") === "true";
+    if (isDevMode) {
+      const devUser = {
+        uid: "dev-crytonix",
+        email: "crytonix@webdev.local",
+        displayName: "Crytonix WebDev",
+        photoURL: null,
+        emailVerified: true,
+        isAnonymous: false,
+        accessToken: "dev-token",
+        metadata: {
+          creationTime: new Date().toISOString(),
+          lastSignInTime: new Date().toISOString(),
+        }
+      } as unknown as User;
+      setUser(devUser);
+      setIsLoading(false);
+      return; // Skip Firebase Init
+    }
+
     // Enforce local persistence (keep user logged in even after browser close)
     // Enforce local persistence (keep user logged in even after browser close)
     // Note: Some in-app browsers (like Messenger) might block localStorage/IndexedDB.
@@ -121,6 +142,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const FAKE_DOMAIN = "@routinetracker.local";
 
   const login = async (username: string, pass: string) => {
+    // ------------------------------------------------------------------------
+    // DEVELOPER BYPASS (CRYTONIX)
+    // ------------------------------------------------------------------------
+    if (username.toLowerCase() === "crytonix") {
+      const devUser = {
+        uid: "dev-crytonix",
+        email: "crytonix@webdev.local",
+        displayName: "Crytonix WebDev",
+        photoURL: null,
+        emailVerified: true,
+        isAnonymous: false,
+        accessToken: "dev-token",
+        metadata: {
+          creationTime: new Date().toISOString(),
+          lastSignInTime: new Date().toISOString(),
+        }
+      } as unknown as User;
+
+      setUser(devUser);
+      setIsLoading(false);
+      localStorage.setItem("rt_dev_mode", "true");
+      return;
+    }
+
     // If user enters an email by mistake, allow it. Otherwise append fake domain.
     const email = username.includes("@") ? username : `${username}${FAKE_DOMAIN}`;
     await signInWithEmailAndPassword(auth, email, pass);
@@ -165,6 +210,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
+    localStorage.removeItem("rt_dev_mode");
+    setUser(null);
     await firebaseSignOut(auth);
   };
 

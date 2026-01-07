@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { Button } from "./ui/Button";
 import { TemplatesModal } from "./TemplatesModal";
 import { SettingsModal } from "./SettingsModal";
+import { NotificationCenter } from "./NotificationCenter";
 
 import { useUI } from "@/context/UIContext";
 
@@ -33,6 +34,8 @@ const Header: React.FC = () => {
         </Link>
 
         <div className="flex items-center gap-3">
+          <NotificationCenter />
+
           <Button
             variant="ghost"
             size="icon"
