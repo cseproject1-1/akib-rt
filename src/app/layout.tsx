@@ -8,6 +8,7 @@ import { NotificationManager } from "@/components/NotificationManager";
 import { AIChat } from "@/components/ai/AIChat";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 
 import { Toaster } from "sonner";
 
@@ -116,6 +117,7 @@ export default function RootLayout({
           <AIChat />
           <PWAInstallPrompt />
           <KeyboardShortcuts />
+          <OfflineIndicator />
           <Toaster richColors position="top-right" />
         </Providers>
       </body>

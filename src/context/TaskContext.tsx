@@ -14,6 +14,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid"; // Used to generate unique IDs for tasks
 import { format, subDays } from "date-fns"; // Date formatting helpers
 import { db } from "@/lib/firebase"; // Firestore instance
+import { withRetry, handleFirestoreError, showSuccess } from "@/lib/firestoreUtils";
 import {
   collection,
   onSnapshot,
@@ -185,20 +186,22 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // 4. CRUD OPERATIONS
   // ----------------------------------------------------------------------------
 
-  // ADD TASK
+  // ADD TASK (Optimistic Update)
   const addTask = async (taskData: Omit<Task, "id" | "isCompleted" | "completionHistory">) => {
     if (!user) return;
 
     // Create new task object
     const newTask: Task = {
       ...taskData,
-      id: uuidv4(),      // Generate a client-side ID
+      id: uuidv4(),
       isCompleted: false,
       completionHistory: []
     };
 
-    // Sanitize: Firestore does not allow 'undefined' values.
-    // We create a clean object for Firestore.
+    // OPTIMISTIC: Add to local state immediately
+    setTasks(prev => [...prev, newTask]);
+
+    // Sanitize for Firestore
     const firestoreData = { ...newTask };
     Object.keys(firestoreData).forEach(key => {
       if (firestoreData[key as keyof Task] === undefined) {
@@ -207,20 +210,26 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     try {
-      await setDoc(doc(db, "users", user.uid, "tasks", newTask.id), firestoreData);
+      await withRetry(
+        () => setDoc(doc(db, "users", user.uid, "tasks", newTask.id), firestoreData),
+        { operationName: "Add task" }
+      );
     } catch (error: any) {
-      console.error("Failed to add task:", error);
-      if (error.code === "permission-denied") {
-        alert("⚠️ Firestore Permission Denied!\n\nPlease update your Firebase security rules:\n1. Go to Firebase Console → Firestore → Rules\n2. Add the rules from firestore.rules file\n3. Click Publish");
-      } else {
-        alert(`Failed to save task: ${error.message}`);
-      }
+      // ROLLBACK: Remove from local state on failure
+      setTasks(prev => prev.filter(t => t.id !== newTask.id));
+      handleFirestoreError(error, "Add task");
     }
   };
 
-  // UPDATE TASK
+  // UPDATE TASK (Optimistic Update)
   const updateTask = async (updatedTask: Task) => {
     if (!user) return;
+
+    // Save previous state for rollback
+    const previousTasks = [...tasks];
+
+    // OPTIMISTIC: Update local state immediately
+    setTasks(prev => prev.map(t => t.id === updatedTask.id ? updatedTask : t));
 
     // Sanitize data
     const dataToSave = { ...updatedTask };
@@ -230,30 +239,50 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    // Overwrite the document with new data
     try {
-      await updateDoc(doc(db, "users", user.uid, "tasks", updatedTask.id), dataToSave);
+      await withRetry(
+        () => updateDoc(doc(db, "users", user.uid, "tasks", updatedTask.id), dataToSave),
+        { operationName: "Update task" }
+      );
     } catch (error: any) {
-      console.error("Failed to update task:", error);
-      alert(`Failed to update task: ${error.message}`);
+      // ROLLBACK: Restore previous state on failure
+      setTasks(previousTasks);
+      handleFirestoreError(error, "Update task");
     }
   };
 
-  // DELETE TASK
+  // DELETE TASK (Optimistic Update)
   const deleteTask = async (id: string) => {
     if (!user) return;
+
+    // Save task for potential rollback
+    const deletedTask = tasks.find(t => t.id === id);
+
+    // OPTIMISTIC: Remove from local state immediately
+    setTasks(prev => prev.filter(t => t.id !== id));
+
     try {
-      await deleteDoc(doc(db, "users", user.uid, "tasks", id));
+      await withRetry(
+        () => deleteDoc(doc(db, "users", user.uid, "tasks", id)),
+        { operationName: "Delete task" }
+      );
     } catch (error: any) {
-      console.error("Failed to delete task:", error);
-      alert(`Failed to delete task: ${error.message}`);
+      // ROLLBACK: Restore deleted task on failure
+      if (deletedTask) {
+        setTasks(prev => [...prev, deletedTask]);
+      }
+      handleFirestoreError(error, "Delete task");
     }
   };
 
+  // TOGGLE TASK COMPLETION (Optimistic Update)
   const toggleTaskCompletion = async (id: string) => {
     if (!user) return;
     const task = tasks.find(t => t.id === id);
     if (!task) return;
+
+    // Save previous state for rollback
+    const previousTasks = [...tasks];
 
     const todayStr = format(new Date(), "yyyy-MM-dd");
     const isCurrentlyCompleted = task.completionHistory.includes(todayStr);
@@ -266,20 +295,23 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const updates = {
       completionHistory: newHistory,
       isCompleted: !isCurrentlyCompleted,
-      lastCompletedDate: !isCurrentlyCompleted ? new Date().toISOString() : null,
+      lastCompletedDate: !isCurrentlyCompleted ? new Date().toISOString() : undefined,
     };
 
-    // 2. Simulate the new state of ALL tasks to calculate global stats
+    // OPTIMISTIC: Update local state immediately
+    setTasks(prev => prev.map(t =>
+      t.id === id ? { ...t, ...updates } : t
+    ));
+
+    // 2. Calculate global stats for the new state
     const simulatedTasks = tasks.map(t =>
       t.id === id ? { ...t, completionHistory: newHistory } : t
     );
 
     // --- HELPER: Calculate Global Stats ---
     const calculateGlobalStats = (currentTasks: Task[]) => {
-      // A. Total Completed (All time)
       const totalCompleted = currentTasks.reduce((acc, t) => acc + t.completionHistory.length, 0);
 
-      // B. Completion Rate (Last 7 Days)
       let scheduled = 0;
       let completed = 0;
       const today = new Date();
@@ -289,7 +321,6 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const dayName = format(dateToCheck, "EEE").toUpperCase();
 
         currentTasks.forEach(t => {
-          // Check if scheduled (handling specificDate override vs regular days)
           const isScheduled = t.specificDate
             ? t.specificDate === dateStr
             : t.days.includes(dayName);
@@ -302,24 +333,15 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       const completionRate = scheduled === 0 ? 0 : Math.round((completed / scheduled) * 100);
 
-      // C. Global Streak (Consecutive days with at least 1 completed task)
       let streak = 0;
-      // Check last 365 days
       for (let i = 0; i < 365; i++) {
         const dateToCheck = subDays(today, i);
         const dateStr = format(dateToCheck, "yyyy-MM-dd");
-
-        // Did we complete ANY task on this date?
         const anyTaskDone = currentTasks.some(t => t.completionHistory.includes(dateStr));
 
         if (anyTaskDone) {
           streak++;
         } else {
-          // If it's today (i=0) and we haven't done anything yet, it doesn't break the streak from yesterday.
-          // Examples:
-          // - Done yesterday, done today => streak 2
-          // - Done yesterday, NOT done today => streak 1 (still active)
-          // - NOT done yesterday => streak 0 (broken)
           if (i === 0) continue;
           break;
         }
@@ -332,11 +354,9 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const batch = writeBatch(db);
 
-      // 3. Queue Update for the Task
       const taskRef = doc(db, "users", user.uid, "tasks", id);
       batch.update(taskRef, updates as unknown as Partial<Task>);
 
-      // 4. Queue Update for User Stats (Leaderboard)
       const userRef = doc(db, "users", user.uid);
       const scoreChange = !isCurrentlyCompleted ? 10 : -10;
 
@@ -345,22 +365,21 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: user.email,
         displayName: user.displayName || user.email?.split('@')[0] || 'User',
         photoURL: user.photoURL,
-        // New Leaderboard Stats
         totalCompleted: stats.totalCompleted,
         completionRate: stats.completionRate,
         streak: stats.streak,
         lastActive: new Date().toISOString()
       }, { merge: true });
 
-      await batch.commit();
+      await withRetry(
+        () => batch.commit(),
+        { operationName: "Toggle completion" }
+      );
 
     } catch (error: any) {
-      console.error("Failed to toggle completion:", error);
-      if (error.code === "permission-denied") {
-        alert("⚠️ Firestore Permission Denied!\n\nPlease update your Firebase permissions.");
-      } else {
-        alert(`Failed to update task status: ${error.message}`);
-      }
+      // ROLLBACK: Restore previous state on failure
+      setTasks(previousTasks);
+      handleFirestoreError(error, "Toggle completion");
     }
   };
 
@@ -460,11 +479,13 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     try {
       const sanitizedTasks = sanitizeTasks(tasks);
-      await setDoc(doc(db, "users", user.uid, "templates", name), { tasks: sanitizedTasks });
-      alert("Template saved successfully!");
+      await withRetry(
+        () => setDoc(doc(db, "users", user.uid, "templates", name), { tasks: sanitizedTasks }),
+        { operationName: "Save template" }
+      );
+      showSuccess("Template saved!", `"${name}" is ready to use`);
     } catch (error: any) {
-      console.error("Failed to save template:", error);
-      alert(`Failed to save template: ${error.message}`);
+      handleFirestoreError(error, "Save template");
     }
   };
 
@@ -483,10 +504,12 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     try {
-      await batch.commit();
+      await withRetry(
+        () => batch.commit(),
+        { operationName: "Apply template" }
+      );
     } catch (error: any) {
-      console.error("Failed to apply template:", error);
-      alert(`Failed to apply template: ${error.message}`);
+      handleFirestoreError(error, "Apply template");
     }
   };
 

@@ -5,6 +5,9 @@ import { useTask } from "@/context/TaskContext";
 import { useAuth } from "@/context/AuthContext";
 import { useNotification } from "@/context/NotificationContext";
 import { format, subMinutes, addMinutes, isAfter, isBefore } from "date-fns";
+import { db } from "@/lib/firebase";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+
 
 export const NotificationManager: React.FC = () => {
     const { tasks } = useTask();
@@ -174,6 +177,60 @@ export const NotificationManager: React.FC = () => {
         checkTasks(); // Initial check
         return () => clearInterval(interval);
     }, [tasks, showNotification]);
+
+    // Check server-prepared scheduledReminders from Firestore (cron job prepares these daily)
+    useEffect(() => {
+        const checkServerReminders = async () => {
+            if (!user) return;
+            if (Notification.permission !== "granted") return;
+
+            let notificationsEnabled = false;
+            try {
+                notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
+            } catch (e) { }
+            if (!notificationsEnabled) return;
+
+            try {
+                const now = new Date();
+                const currentTime = format(now, "HH:mm");
+
+                const remindersSnapshot = await getDocs(
+                    collection(db, "users", user.uid, "scheduledReminders")
+                );
+
+                for (const reminderDoc of remindersSnapshot.docs) {
+                    const reminder = reminderDoc.data();
+
+                    // Skip if already delivered
+                    if (reminder.delivered) continue;
+
+                    // Check if reminder time has passed
+                    if (reminder.reminderTime <= currentTime && !notifiedTasks.current.has(reminderDoc.id)) {
+                        showNotification(
+                            `⏰ Upcoming: ${reminder.taskTitle}`,
+                            `${reminder.taskIcon} Starting at ${reminder.startTime}`,
+                            `reminder-${reminderDoc.id}`
+                        );
+                        notifiedTasks.current.add(reminderDoc.id);
+
+                        // Mark as delivered in Firestore
+                        await updateDoc(doc(db, "users", user.uid, "scheduledReminders", reminderDoc.id), {
+                            delivered: true
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("[Notifications] Failed to check server reminders:", error);
+            }
+        };
+
+        // Check every minute for server-prepared reminders
+        if (user) {
+            const interval = setInterval(checkServerReminders, 60000);
+            checkServerReminders(); // Initial check
+            return () => clearInterval(interval);
+        }
+    }, [user, showNotification]);
 
     // Daily AI Motivation (online only)
     // Daily AI Motivation

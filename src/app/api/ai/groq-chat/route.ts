@@ -1,5 +1,8 @@
 import Groq from "groq-sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { withRateLimit } from "@/lib/rateLimit";
+import { sanitizePlainText } from "@/lib/sanitize";
+import { logger } from "@/lib/logger";
 
 // System prompt for the AI assistant (same as Gemini)
 const SYSTEM_PROMPT = `You are "Routine AI", a helpful assistant for a routine tracking app. You help users:
@@ -28,8 +31,21 @@ When providing motivation, be encouraging, specific to their tasks, and concise.
 Always be friendly, professional, and supportive.`;
 
 export async function POST(request: NextRequest) {
+    // Rate limiting: 20 requests per minute
+    const rateLimitResponse = withRateLimit(request, {
+        maxRequests: 20,
+        windowMs: 60 * 1000,
+        message: "Too many chat requests. Please wait a moment."
+    });
+    if (rateLimitResponse) {
+        logger.warn("Rate limit exceeded for Groq chat", undefined, { action: "POST /api/ai/groq-chat" });
+        return rateLimitResponse;
+    }
+
     try {
-        const { message, context } = await request.json();
+        const body = await request.json();
+        const message = sanitizePlainText(body.message);
+        const context = body.context;
 
         if (!message) {
             return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -80,7 +96,7 @@ export async function POST(request: NextRequest) {
             action,
         });
     } catch (error: any) {
-        console.error("Groq Chat Error:", error);
+        logger.apiError("/api/ai/groq-chat", "POST", error, 500);
         return NextResponse.json(
             { error: error.message || "Failed to generate response" },
             { status: 500 }

@@ -1,13 +1,21 @@
 import Groq from "groq-sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { withRateLimit } from "@/lib/rateLimit";
+import { sanitizePlainText } from "@/lib/sanitize";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
+    // Rate limiting: 30 requests per minute
+    const rateLimitResponse = withRateLimit(request, { maxRequests: 30, windowMs: 60 * 1000 });
+    if (rateLimitResponse) return rateLimitResponse;
+
     try {
-        const { tasks, userName } = await request.json();
+        const body = await request.json();
+        const tasks = body.tasks;
+        const userName = sanitizePlainText(body.userName);
 
         const apiKey = process.env.GROQ_API_KEY;
         if (!apiKey) {
-            // Return fallback motivation if no API key
             return NextResponse.json({
                 motivation: "🚀 Rise and shine! Today is a new opportunity to crush your goals. You've got this!",
             });
@@ -15,10 +23,9 @@ export async function POST(request: NextRequest) {
 
         const groq = new Groq({ apiKey });
 
-        // Build a prompt for motivation
         let tasksContext = "The user has no tasks today.";
         if (tasks?.length) {
-            tasksContext = `The user has the following tasks today:\n${tasks.map((t: any) => `- ${t.title} at ${t.startTime}`).join("\n")}`;
+            tasksContext = `The user has the following tasks today:\n${tasks.map((t: any) => `- ${sanitizePlainText(t.title)} at ${t.startTime}`).join("\n")}`;
         }
 
         const prompt = `You are a motivational coach for a routine tracking app. Generate a short, personalized, encouraging message (2-3 sentences max) to motivate the user to complete their tasks today.
@@ -41,7 +48,7 @@ Be warm, specific to their tasks if possible, and inspiring. Use an emoji at the
 
         return NextResponse.json({ motivation });
     } catch (error: any) {
-        console.error("Groq Motivation Error:", error);
+        logger.apiError("/api/ai/groq-motivation", "POST", error, 500);
         return NextResponse.json({
             motivation: "🚀 Rise and shine! Today is a new opportunity to crush your goals. You've got this!",
         });

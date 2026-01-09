@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Palmtree, Calendar, Play, Pause, AlertTriangle, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { format, addDays, isBefore, isAfter, parseISO } from "date-fns";
+import { toast } from "sonner";
 
 interface VacationModeProps {
     onClose?: () => void;
@@ -26,14 +27,19 @@ export const VacationMode: React.FC<VacationModeProps> = ({ onClose }) => {
         setIsActive(true);
 
         // Show confirmation
-        alert(`🏝️ Vacation Mode activated!\n\nFrom: ${format(parseISO(startDate), "MMM d, yyyy")}\nTo: ${format(parseISO(endDate), "MMM d, yyyy")}\n\nAll recurring tasks will be paused during this period.`);
+        toast.success("🏝️ Vacation Mode activated!", {
+            description: `From ${format(parseISO(startDate), "MMM d, yyyy")} to ${format(parseISO(endDate), "MMM d, yyyy")}. All recurring tasks will be paused.`,
+            duration: 5000,
+        });
 
         onClose?.();
     };
 
     const handleDeactivate = () => {
         setIsActive(false);
-        alert("✅ Vacation Mode deactivated. All tasks resumed!");
+        toast.success("✅ Vacation Mode deactivated", {
+            description: "All tasks have been resumed!",
+        });
     };
 
     const daysDiff = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24));

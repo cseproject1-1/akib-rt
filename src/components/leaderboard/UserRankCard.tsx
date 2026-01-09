@@ -4,6 +4,7 @@ import React from "react";
 import { cn, Button } from "@/components/ui/Button";
 import { TrendingUp, Target, Flame, CheckCircle, Share2 } from "lucide-react";
 import { useTask } from "@/context/TaskContext";
+import { toast } from "sonner";
 
 interface UserRankCardProps {
     rank: number;
@@ -31,7 +32,7 @@ export const UserRankCard: React.FC<UserRankCardProps> = ({ rank, totalUsers }) 
                 await navigator.share(shareData);
             } else {
                 await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
-                alert("Copied to clipboard!");
+                toast.success("Copied to clipboard!");
             }
         } catch (err) {
             console.error(err);

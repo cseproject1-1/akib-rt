@@ -1,6 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import Groq from "groq-sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { withRateLimit } from "@/lib/rateLimit";
+import { logger } from "@/lib/logger";
 
 // Initialize the Gemini AI client
 const getAIClient = () => {
@@ -28,6 +30,17 @@ Example response:
 [{"title":"Mathematics","startTime":"09:00","endTime":"10:00","days":["MON","WED","FRI"],"icon":"🧮","timeBlock":"Morning"}]`;
 
 export async function POST(request: NextRequest) {
+    // Rate limiting: 10 requests per minute (image processing is expensive)
+    const rateLimitResponse = withRateLimit(request, {
+        maxRequests: 10,
+        windowMs: 60 * 1000,
+        message: "Too many schedule parsing requests. Please wait a moment."
+    });
+    if (rateLimitResponse) {
+        logger.warn("Rate limit exceeded for schedule parsing", undefined, { action: "POST /api/ai/parse-schedule" });
+        return rateLimitResponse;
+    }
+
     try {
         const formData = await request.formData();
         const file = formData.get("image") as File;
@@ -157,7 +170,7 @@ export async function POST(request: NextRequest) {
             count: validatedTasks.length,
         });
     } catch (error: any) {
-        console.error("Schedule Parse Error:", error);
+        logger.apiError("/api/ai/parse-schedule", "POST", error, 500);
         return NextResponse.json(
             { error: error.message || "Failed to parse schedule image" },
             { status: 500 }

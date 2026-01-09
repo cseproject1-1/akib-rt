@@ -2,33 +2,118 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // User Profiles
-    // Enable READ for everyone (needed for Leaderboard)
-    // Write only for owner
+    // ============================================================================
+    // ENHANCED FIRESTORE SECURITY RULES
+    // ============================================================================
+    // SETUP INSTRUCTIONS:
+    // 1. Go to Firebase Console → Firestore Database → Rules
+    // 2. Copy and paste this entire file
+    // 3. Click "Publish"
+    // ============================================================================
+    
+    // Helper: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper: Check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper: Validate task data structure
+    function isValidTask() {
+      let task = request.resource.data;
+      return task.keys().hasAll(['title', 'icon', 'startTime', 'endTime', 'timeBlock', 'days', 'isCompleted', 'completionHistory'])
+        && task.title is string && task.title.size() > 0 && task.title.size() <= 100
+        && task.icon is string && task.icon.size() <= 10
+        && task.timeBlock in ['Dawn', 'Morning', 'Noon', 'Afternoon', 'Evening', 'Night']
+        && task.days is list && task.days.size() > 0
+        && task.isCompleted is bool
+        && task.completionHistory is list;
+    }
+    
+    // Helper: Validate goal data structure
+    function isValidGoal() {
+      let goal = request.resource.data;
+      return goal.keys().hasAll(['title', 'targetDate', 'isCompleted'])
+        && goal.title is string && goal.title.size() > 0 && goal.title.size() <= 100
+        && goal.targetDate is string
+        && goal.isCompleted is bool;
+    }
+    
+    // ============================================================================
+    // USER DOCUMENTS
+    // ============================================================================
     match /users/{userId} {
+      // Enable READ for everyone (needed for Leaderboard)
       allow read: if true; 
-      allow write: if request.auth != null && request.auth.uid == userId;
+      // Write only for owner
+      allow write: if isOwner(userId);
 
-      // Subcollections (Tasks, Goals, Templates) -> Private
+      // ============================================================================
+      // TASKS SUBCOLLECTION - with validation
+      // ============================================================================
       match /tasks/{taskId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidTask();
+        allow update, delete: if isOwner(userId);
       }
+      
+      // ============================================================================
+      // GOALS SUBCOLLECTION - with validation
+      // ============================================================================
       match /goals/{goalId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidGoal();
+        allow update, delete: if isOwner(userId);
       }
+      
+      // ============================================================================
+      // TEMPLATES SUBCOLLECTION
+      // ============================================================================
       match /templates/{templateId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if isOwner(userId);
       }
       
-      // NEW: Moods subcollection for mood tracking
+      // ============================================================================
+      // MOODS SUBCOLLECTION
+      // ============================================================================
       match /moods/{moodId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if isOwner(userId);
       }
       
-      // NEW: Achievements data (XP, unlocked achievements)
+      // ============================================================================
+      // ACHIEVEMENTS SUBCOLLECTION
+      // ============================================================================
       match /achievements/{achievementId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if isOwner(userId);
       }
+      
+      // ============================================================================
+      // NOTIFICATIONS SUBCOLLECTION (for task reminders)
+      // ============================================================================
+      match /notifications/{notificationId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // ============================================================================
+      // WEEKLY SUMMARIES SUBCOLLECTION
+      // ============================================================================
+      match /weeklySummaries/{summaryId} {
+        allow read: if isOwner(userId);
+        allow write: if isOwner(userId);
+      }
+    }
+    
+    // ============================================================================
+    // SHARED NOTES (Public read)
+    // ============================================================================
+    match /shared/{noteId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() 
+        && request.auth.uid == resource.data.userId;
     }
   }
 }

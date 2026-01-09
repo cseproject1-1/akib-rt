@@ -1,5 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
+import { withRateLimit } from "@/lib/rateLimit";
+import { sanitizePlainText } from "@/lib/sanitize";
+import { logger } from "@/lib/logger";
 
 // Initialize the Gemini AI client
 const getAIClient = () => {
@@ -62,8 +65,24 @@ const SYSTEM_PROMPT = `You are "Routine AI", a smart, friendly productivity assi
 - For time conflicts, show both tasks and ask how to proceed`;
 
 export async function POST(request: NextRequest) {
+    // Rate limiting: 20 requests per minute for AI chat
+    const rateLimitResponse = withRateLimit(request, {
+        maxRequests: 20,
+        windowMs: 60 * 1000,
+        message: "Too many chat requests. Please wait a moment."
+    });
+    if (rateLimitResponse) {
+        logger.warn("Rate limit exceeded for AI chat", undefined, { action: "POST /api/ai/chat" });
+        return rateLimitResponse;
+    }
+
     try {
-        const { message, context, conversationHistory } = await request.json();
+        const body = await request.json();
+
+        // Sanitize user input
+        const message = sanitizePlainText(body.message);
+        const context = body.context;
+        const conversationHistory = body.conversationHistory;
 
         if (!message) {
             return NextResponse.json({ error: "Message is required" }, { status: 400 });
@@ -77,13 +96,13 @@ export async function POST(request: NextRequest) {
         if (context?.tasks?.length) {
             const taskList = context.tasks.map((t: any) => {
                 const status = t.isCompleted ? "✅" : "⬜";
-                return `- ${status} [ID: ${t.id}] "${t.title}" (${t.startTime}-${t.endTime}, ${t.days?.join(",") || "daily"})${t.streak ? ` 🔥${t.streak}` : ""}`;
+                return `- ${status} [ID: ${t.id}] "${sanitizePlainText(t.title)}" (${t.startTime}-${t.endTime}, ${t.days?.join(",") || "daily"})${t.streak ? ` 🔥${t.streak}` : ""}`;
             }).join("\n");
             contextMessage += `\n\n## USER'S TASKS:\n${taskList}`;
         }
 
         if (context?.goals?.length) {
-            const goalList = context.goals.map((g: any) => `- "${g.title}" (${g.category || "Personal"})`).join("\n");
+            const goalList = context.goals.map((g: any) => `- "${sanitizePlainText(g.title)}" (${g.category || "Personal"})`).join("\n");
             contextMessage += `\n\n## USER'S GOALS:\n${goalList}`;
         }
 
@@ -99,7 +118,7 @@ export async function POST(request: NextRequest) {
             for (const msg of recentHistory) {
                 contents.push({
                     role: msg.role === "user" ? "user" : "model",
-                    parts: [{ text: msg.content }],
+                    parts: [{ text: sanitizePlainText(msg.content) }],
                 });
             }
         }
@@ -125,12 +144,14 @@ export async function POST(request: NextRequest) {
             }
         }
 
+        logger.info("AI chat response generated", { action: "POST /api/ai/chat" });
+
         return NextResponse.json({
             message: text,
             action,
         });
     } catch (error: any) {
-        console.error("AI Chat Error:", error);
+        logger.apiError("/api/ai/chat", "POST", error, 500);
         return NextResponse.json(
             { error: error.message || "Failed to generate response" },
             { status: 500 }

@@ -10,6 +10,7 @@ import { Plus, Target, LayoutGrid, CalendarDays } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
+import { handleFirestoreError, withRetry } from "@/lib/firestoreUtils";
 import {
   collection,
   onSnapshot,
@@ -72,12 +73,7 @@ export default function GoalsPage() {
         await setDoc(doc(db, "users", user.uid, "goals", newGoal.id), newGoal);
       }
     } catch (error: any) {
-      console.error("Failed to save goal:", error);
-      if (error.code === "permission-denied") {
-        alert("⚠️ Firestore Permission Denied!\n\nPlease update your Firebase security rules:\n1. Go to Firebase Console → Firestore → Rules\n2. Add the rules from firestore.rules file\n3. Click Publish");
-      } else {
-        alert("Failed to save goal. Please try again.");
-      }
+      handleFirestoreError(error, "Save goal");
     }
   };
 

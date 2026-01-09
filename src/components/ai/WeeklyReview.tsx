@@ -7,6 +7,7 @@ import { useAI } from "@/context/AIContext";
 import { FileText, Sparkles, TrendingUp, TrendingDown, Minus, Loader2, RefreshCw, Download, Share2, Calendar, Target, Flame } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { format, subDays, startOfWeek, endOfWeek } from "date-fns";
+import { toast } from "sonner";
 
 export const WeeklyReview: React.FC = () => {
     const { tasks, getCompletionRate } = useTask();
@@ -93,7 +94,7 @@ ${review || ""}
                 await navigator.share({ text: shareText });
             } else {
                 await navigator.clipboard.writeText(shareText);
-                alert("Copied to clipboard!");
+                toast.success("Copied to clipboard!");
             }
         } catch (err) {
             console.error(err);
