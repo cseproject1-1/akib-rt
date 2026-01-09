@@ -19,27 +19,27 @@ jobs:
       - name: Trigger Daily Motivation (6 AM)
         if: github.event.schedule == '0 6 * * *' || github.event_name == 'workflow_dispatch'
         run: |
-          curl -X GET ${{ vars.APP_URL }}/api/cron/daily-motivation \
+          curl -X GET ${{ secrets.APP_URL }}/api/cron/daily-motivation \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
           -H "Content-Type: application/json"
 
       - name: Trigger Streak Recalculation (Midnight)
         if: github.event.schedule == '0 0 * * *' || github.event_name == 'workflow_dispatch'
         run: |
-          curl -X GET ${{ vars.APP_URL }}/api/cron/streak-recalculation \
+          curl -X GET ${{ secrets.APP_URL }}/api/cron/streak-recalculation \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
           -H "Content-Type: application/json"
 
       - name: Trigger Task Reminders (5 AM)
         if: github.event.schedule == '0 5 * * *' || github.event_name == 'workflow_dispatch'
         run: |
-          curl -X GET ${{ vars.APP_URL }}/api/cron/task-reminders \
+          curl -X GET ${{ secrets.APP_URL }}/api/cron/task-reminders \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
           -H "Content-Type: application/json"
 
       - name: Trigger Weekly Summary (Sunday 9 AM)
         if: github.event.schedule == '0 9 * * 0' || github.event_name == 'workflow_dispatch'
         run: |
-          curl -X GET ${{ vars.APP_URL }}/api/cron/weekly-summary \
+          curl -X GET ${{ secrets.APP_URL }}/api/cron/weekly-summary \
           -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
           -H "Content-Type: application/json"
