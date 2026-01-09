@@ -1,5 +1,7 @@
 # 🌟 Routine Tracker (RT)
 
+[![Trigger Cron Jobs](https://github.com/akibcse24/rt/actions/workflows/cron.yml/badge.svg?branch=main&event=schedule)](https://github.com/akibcse24/rt/actions/workflows/cron.yml)
+
 **Premium routine tracking for peak performance. Build unbreakable discipline.**
 
 ![Routine Tracker](public/og-image.jpg)
