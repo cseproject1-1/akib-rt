@@ -6,12 +6,12 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   labelClassName?: string;
   error?: string;
   leftIcon?: React.ReactNode;
-}
+};
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, labelClassName, error, leftIcon, ...props }, ref) => {
