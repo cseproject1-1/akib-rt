@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button, cn } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -101,7 +101,7 @@ export const GoalModal = ({
                         <input
                             type="text"
                             value={icon}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setIcon(e.target.value)}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setIcon(e.target.value)}
                             maxLength={2}
                             className="flex h-16 w-full brutal-border border-4 bg-primary text-center text-4xl focus:outline-none focus:bg-primary focus:scale-105 transition-all brutal-shadow-lg brutal-glow"
                         />
@@ -112,7 +112,7 @@ export const GoalModal = ({
                             labelClassName="text-xs font-black text-primary uppercase tracking-[0.3em] mb-3 block italic"
                             placeholder="What is your mission?"
                             value={title}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                             className="h-16 bg-black text-2xl font-black uppercase tracking-tighter italic brutal-border border-4 focus:bg-primary/5"
                         />
                     </div>
@@ -125,7 +125,7 @@ export const GoalModal = ({
                     </label>
                     <textarea
                         value={description}
-                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                         placeholder="Detail your path to greatness..."
                         rows={3}
                         className="w-full brutal-border border-4 bg-black p-4 text-lg font-bold text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:bg-primary/5 transition-all resize-none italic uppercase tracking-tight leading-relaxed"
@@ -143,7 +143,7 @@ export const GoalModal = ({
                     <Input
                         type="date"
                         value={targetDate}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTargetDate(e.target.value)}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => setTargetDate(e.target.value)}
                         className="h-16 bg-black brutal-border border-4 text-xl font-black uppercase italic focus:bg-primary/5"
                     />
                 </div>
@@ -162,8 +162,8 @@ export const GoalModal = ({
                         <Input
                             placeholder="Add a milestone towards victory..."
                             value={newMilestone}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewMilestone(e.target.value)}
-                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleAddMilestone()}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => setNewMilestone(e.target.value)}
+                            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleAddMilestone()}
                             className="h-16 bg-black brutal-border border-4 text-xl font-black uppercase italic focus:bg-primary/5"
                         />
                         <Button
