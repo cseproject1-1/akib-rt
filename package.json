@@ -1,0 +1,58 @@
+{
+  "name": "rt",
+  "version": "0.1.0",
+  "private": true,
+  "description": "routine tracker ",
+  "keywords": [
+    "rt"
+  ],
+  "homepage": "https://github.com/akibcse24/mydailytasktracker#readme",
+  "bugs": {
+    "url": "https://github.com/akibcse24/mydailytasktracker/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akibcse24/mydailytasktracker.git"
+  },
+  "license": "ISC",
+  "author": "Adnan Akib",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@google/genai": "^1.34.0",
+    "@types/uuid": "^10.0.0",
+    "canvas-confetti": "^1.9.4",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "firebase": "^12.7.0",
+    "framer-motion": "^12.23.26",
+    "groq-sdk": "^0.37.0",
+    "lucide-react": "^0.562.0",
+    "next": "16.1.1",
+    "next-themes": "^0.4.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "recharts": "^3.6.0",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/canvas-confetti": "^1.9.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

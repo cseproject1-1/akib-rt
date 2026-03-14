@@ -1,0 +1,141 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ============================================================================
+    // ENHANCED FIRESTORE SECURITY RULES
+    // ============================================================================
+    // SETUP INSTRUCTIONS:
+    // 1. Go to Firebase Console → Firestore Database → Rules
+    // 2. Copy and paste this entire file
+    // 3. Click "Publish"
+    // ============================================================================
+    
+    // Helper: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper: Check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Helper: Validate task data structure
+    function isValidTask() {
+      let task = request.resource.data;
+      let hasSpecificDate = 'specificDate' in task.keys();
+      
+      // Required fields for all tasks
+      let hasRequiredFields = task.keys().hasAll(['title', 'icon', 'startTime', 'endTime', 'timeBlock', 'days', 'isCompleted', 'completionHistory']);
+      
+      // Basic field validation
+      let basicValidation = task.title is string && task.title.size() > 0 && task.title.size() <= 100
+        && task.icon is string && task.icon.size() <= 10
+        && task.timeBlock in ['Dawn', 'Morning', 'Noon', 'Afternoon', 'Evening', 'Night']
+        && task.days is list
+        && task.isCompleted is bool
+        && task.completionHistory is list;
+      
+      // Days array validation: Must have items for recurring tasks, can be empty for date-specific tasks
+      let daysValidation = hasSpecificDate ? true : task.days.size() > 0;
+      
+      // specificDate validation: If present, must be a string
+      let specificDateValidation = hasSpecificDate ? (task.specificDate is string) : true;
+      
+      return hasRequiredFields && basicValidation && daysValidation && specificDateValidation;
+    }
+    
+    // Helper: Validate goal data structure
+    function isValidGoal() {
+      let goal = request.resource.data;
+      return goal.keys().hasAll(['title', 'targetDate', 'isCompleted'])
+        && goal.title is string && goal.title.size() > 0 && goal.title.size() <= 100
+        && goal.targetDate is string
+        && goal.isCompleted is bool;
+    }
+    
+    // ============================================================================
+    // USER DOCUMENTS
+    // ============================================================================
+    match /users/{userId} {
+      // Enable READ for everyone (needed for Leaderboard)
+      allow read: if true; 
+      // Write only for owner
+      allow write: if isOwner(userId);
+
+      // ============================================================================
+      // TASKS SUBCOLLECTION - with validation
+      // ============================================================================
+      match /tasks/{taskId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidTask();
+        allow update, delete: if isOwner(userId);
+      }
+      
+      // ============================================================================
+      // GOALS SUBCOLLECTION - with validation
+      // ============================================================================
+      match /goals/{goalId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidGoal();
+        allow update, delete: if isOwner(userId);
+      }
+      
+      // ============================================================================
+      // TEMPLATES SUBCOLLECTION
+      // ============================================================================
+      match /templates/{templateId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // ============================================================================
+      // MOODS SUBCOLLECTION
+      // ============================================================================
+      match /moods/{moodId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // ============================================================================
+      // ACHIEVEMENTS SUBCOLLECTION
+      // ============================================================================
+      match /achievements/{achievementId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // ============================================================================
+      // NOTIFICATIONS SUBCOLLECTION (for task reminders)
+      // ============================================================================
+      match /notifications/{notificationId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // ============================================================================
+      // WEEKLY SUMMARIES SUBCOLLECTION
+      // ============================================================================
+      match /weeklySummaries/{summaryId} {
+        allow read: if isOwner(userId);
+        allow write: if isOwner(userId);
+      }
+      
+      // ============================================================================
+      // FOCUS SESSIONS SUBCOLLECTION
+      // ============================================================================
+      match /focusSessions/{sessionId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update, delete: if isOwner(userId);
+      }
+    }
+    
+    // ============================================================================
+    // SHARED NOTES (Public read)
+    // ============================================================================
+    match /shared/{noteId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() 
+        && request.auth.uid == resource.data.userId;
+    }
+  }
+}

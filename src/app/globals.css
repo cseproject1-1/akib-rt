@@ -1,0 +1,135 @@
+@import "tailwindcss";
+ 
+:root {
+  /* Neo-Brutalism Light Theme */
+  --background: 0 0% 98%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --primary: 52 100% 45%;
+  --primary-foreground: 0 0% 0%;
+  --muted: 0 0% 95%;
+  --muted-foreground: 0 0% 40%;
+  --border: 0 0% 80%;
+  --accent: 0 0% 90%;
+  --destructive: 0 84% 60%;
+ 
+  --brutal-shadow: 4px 4px 0px hsl(0 0% 25%);
+  --brutal-shadow-lg: 6px 6px 0px hsl(0 0% 20%);
+  --brutal-border: 2px solid hsl(0 0% 10%);
+}
+ 
+.dark {
+  /* Neo-Brutalism Dark Theme */
+  --background: 0 0% 0%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 5%;
+  --card-foreground: 0 0% 95%;
+  --primary: 52 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --muted: 0 0% 8%;
+  --muted-foreground: 0 0% 50%;
+  --border: 0 0% 25%;
+  --accent: 0 0% 15%;
+  --destructive: 0 84% 60%;
+ 
+  --brutal-shadow: 4px 4px 0px hsl(0 0% 15%);
+  --brutal-shadow-lg: 6px 6px 0px hsl(0 0% 10%);
+  --brutal-border: 2px solid hsl(0 0% 30%);
+}
+ 
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-accent: hsl(var(--accent));
+  --color-destructive: hsl(var(--destructive));
+ 
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-space-mono);
+ 
+  --radius-none: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+}
+ 
+@utility brutal-shadow {
+  box-shadow: var(--brutal-shadow);
+}
+ 
+@utility brutal-shadow-lg {
+  box-shadow: var(--brutal-shadow-lg);
+}
+ 
+@utility brutal-border {
+  border: var(--brutal-border);
+}
+ 
+@utility brutal-card {
+  border: var(--brutal-border);
+  box-shadow: var(--brutal-shadow);
+  background-color: var(--color-card);
+  padding: 1.5rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+ 
+  &:hover {
+    box-shadow: 2px 2px 0px hsl(0 0% 20%);
+    transform: translate(2px, 2px);
+  }
+}
+ 
+@utility brutal-btn {
+  border: var(--brutal-border);
+  box-shadow: var(--brutal-shadow);
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-weight: 700;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+ 
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+  }
+}
+ 
+@utility glass-effect {
+  backdrop-filter: blur(12px);
+  background-color: color-mix(in srgb, var(--color-background) 70%, transparent);
+  border-bottom-width: 1px;
+  border-color: var(--color-border);
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans), system-ui;
+  @apply antialiased transition-colors duration-200 min-h-screen;
+}
+
+/* Custom Scrollbar for Neo-Brutalism */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--foreground));
+}
