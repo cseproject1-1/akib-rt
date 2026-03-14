@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -6,18 +6,19 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
+  labelClassName?: string;
   error?: string;
   leftIcon?: React.ReactNode;
-}
+};
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, leftIcon, ...props }, ref) => {
+  ({ className, label, labelClassName, error, leftIcon, ...props }, ref) => {
     return (
       <div className="w-full space-y-1.5 text-left">
         {label && (
-          <label className="text-sm font-medium text-muted-foreground pl-1">
+          <label className={cn("text-sm font-medium text-muted-foreground pl-1", labelClassName)}>
             {label}
           </label>
         )}
