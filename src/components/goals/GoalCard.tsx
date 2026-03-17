@@ -55,15 +55,15 @@ export const GoalCard = ({
     return (
         <div
             className={cn(
-                "group relative overflow-hidden brutal-card p-1 pb-1 transition-all duration-300",
+                "group relative overflow-hidden clay-card p-1 pb-1 transition-all duration-300 rounded-3xl",
                 goal.isCompleted
-                    ? "bg-green-500/10 border-green-500 brutal-shadow-sm"
+                    ? "bg-green-500/10 border-green-500 clay-shadow-sm"
                     : isOverdue
-                        ? "bg-red-500/10 border-red-500 brutal-shadow-sm"
-                        : "bg-black border-foreground brutal-shadow-lg hover:-translate-y-2 hover:brutal-glow active:translate-y-0 active:shadow-none"
+                        ? "bg-red-500/10 border-red-500 clay-shadow-sm"
+                        : "bg-black border-foreground clay-shadow-lg hover:-translate-y-2 active:translate-y-0 active:shadow-none"
             )}
         >
-            <div className="p-6 brutal-border border-0 border-b-4 border-foreground bg-muted/30">
+            <div className="p-6 clay-border border-0 border-b-4 border-foreground bg-muted/30">
                 {/* Background Glow */}
                 <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-purple-500/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -71,7 +71,7 @@ export const GoalCard = ({
                     {/* Header */}
                     <div className="flex items-start justify-between gap-4 mb-4">
                         <div className="flex items-center gap-5">
-                        <div className="flex h-20 w-20 items-center justify-center brutal-border border-4 bg-primary text-5xl shadow-none transition-transform group-hover:scale-110 group-hover:rotate-3">
+                        <div className="flex h-20 w-20 items-center justify-center clay-border bg-primary text-5xl shadow-none transition-transform group-hover:scale-110 group-hover:rotate-3 rounded-2xl">
                             {goal.icon}
                         </div>
                         <div>
@@ -104,7 +104,7 @@ export const GoalCard = ({
                                 size="icon"
                                 onClick={() => onToggleComplete(goal.id)}
                                 className={cn(
-                                    "h-11 w-11 brutal-border border-4 transition-all brutal-shadow active:translate-x-1 active:translate-y-1 active:shadow-none shadow-none",
+                                    "h-11 w-11 clay-border transition-all clay-shadow active:translate-x-1 active:translate-y-1 active:shadow-none shadow-none rounded-full",
                                     goal.isCompleted
                                         ? "bg-green-500 text-white"
                                         : "bg-background text-muted-foreground"
@@ -116,7 +116,7 @@ export const GoalCard = ({
                                 variant="outline"
                                 size="icon"
                                 onClick={() => onEdit(goal)}
-                                className="h-11 w-11 brutal-border border-4 bg-background text-foreground transition-all brutal-shadow active:translate-x-1 active:translate-y-1 active:shadow-none shadow-none"
+                                className="h-11 w-11 clay-border bg-background text-foreground transition-all clay-shadow active:translate-x-1 active:translate-y-1 active:shadow-none shadow-none rounded-full"
                             >
                                 <Edit2 className="h-5 w-5 stroke-[3]" />
                             </Button>
@@ -124,7 +124,7 @@ export const GoalCard = ({
                                 variant="outline"
                                 size="icon"
                                 onClick={() => onDelete(goal.id)}
-                                className="h-11 w-11 brutal-border border-4 bg-red-500 text-white transition-all brutal-shadow active:translate-x-1 active:translate-y-1 active:shadow-none shadow-none"
+                                className="h-11 w-11 clay-border bg-red-500 text-white transition-all clay-shadow active:translate-x-1 active:translate-y-1 active:shadow-none shadow-none rounded-full"
                             >
                                 <Trash2 className="h-5 w-5 stroke-[3]" />
                             </Button>
@@ -144,10 +144,10 @@ export const GoalCard = ({
                             <span className="text-xs font-black uppercase tracking-[0.3em] italic text-muted-foreground">Overall progress</span>
                             <span className="text-base font-black italic text-primary">{progress}%</span>
                         </div>
-                        <div className="h-6 w-full brutal-border border-4 bg-black overflow-hidden shadow-none">
+                        <div className="h-6 w-full clay-border bg-black overflow-hidden shadow-none rounded-full">
                             <div
                                 className={cn(
-                                    "h-full transition-all duration-1000 ease-out brutal-border border-0 border-r-4 border-foreground",
+                                    "h-full transition-all duration-1000 ease-out clay-border border-0 border-r-4 border-foreground",
                                     goal.isCompleted
                                         ? "bg-green-500"
                                         : "bg-primary"
@@ -169,14 +169,14 @@ export const GoalCard = ({
                                         key={milestone.id}
                                         onClick={() => onToggleMilestone(goal.id, milestone.id)}
                                         className={cn(
-                                            "flex items-center gap-4 w-full p-4 brutal-border border-2 text-left transition-all hover:-translate-x-1 hover:bg-foreground/5",
+                                            "flex items-center gap-4 w-full p-4 clay-border text-left transition-all hover:-translate-x-1 hover:bg-foreground/5 rounded-2xl",
                                             milestone.isCompleted
                                                 ? "bg-green-500/10 border-green-500/50 text-green-500"
                                                 : "bg-black border-foreground/20 text-muted-foreground"
                                         )}
                                     >
                                         <div className={cn(
-                                            "h-6 w-6 brutal-border border-2 flex items-center justify-center transition-all",
+                                            "h-6 w-6 clay-border flex items-center justify-center transition-all rounded-full",
                                             milestone.isCompleted
                                                 ? "border-green-500 bg-green-500"
                                                 : "border-muted-foreground/30 bg-black"

@@ -165,14 +165,14 @@ const OnboardingTour: React.FC = () => {
                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                    className="relative w-full max-w-md overflow-hidden brutal-card bg-card p-8 border-4 border-foreground brutal-shadow-lg"
+                    className="relative w-full max-w-md overflow-hidden glass-card bg-card/90 p-8 border-4 border-foreground/30 glass-shadow-lg rounded-3xl backdrop-blur-xl"
                 >
                     {/* Progress Indicators */}
                     <div className="flex gap-3 mb-8 justify-center">
                         {STEPS.map((_, idx) => (
                             <div
                                 key={idx}
-                                className={`h-4 w-4 brutal-border border-2 transition-all duration-200 ${idx === currentStep ? "bg-primary brutal-shadow scale-110" : "bg-muted"
+                                className={`h-4 w-4 glass-border transition-all duration-200 rounded-full backdrop-blur-sm ${idx === currentStep ? "bg-primary/90 glass-shadow scale-110" : "bg-muted/70"
                                     }`}
                             />
                         ))}
@@ -191,13 +191,13 @@ const OnboardingTour: React.FC = () => {
                         <Button
                             variant="outline"
                             onClick={handleSkip}
-                            className="flex-1 h-14 brutal-border border-4 bg-background text-muted-foreground hover:bg-muted font-black uppercase italic shadow-none transition-all active:translate-x-1 active:translate-y-1"
+                            className="flex-1 h-14 glass-border bg-background/70 text-muted-foreground hover:bg-muted/70 font-black uppercase italic shadow-none transition-all active:translate-x-1 active:translate-y-1 rounded-full backdrop-blur-sm"
                         >
                             Skip
                         </Button>
                         <Button
                             onClick={handleNext}
-                            className="flex-[2] h-14 brutal-border border-4 bg-primary text-primary-foreground font-black uppercase italic shadow-none transition-all hover:-translate-y-1 brutal-shadow active:translate-y-0 active:translate-x-0"
+                            className="flex-[2] h-14 glass-border bg-primary/90 text-primary-foreground font-black uppercase italic shadow-none transition-all hover:-translate-y-1 glass-shadow active:translate-y-0 active:translate-x-0 rounded-full backdrop-blur-sm"
                         >
                             {currentStep === STEPS.length - 1 ? (
                                 <span className="flex items-center gap-2">

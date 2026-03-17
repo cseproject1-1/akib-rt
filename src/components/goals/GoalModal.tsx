@@ -103,7 +103,7 @@ export const GoalModal = ({
                             value={icon}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => setIcon(e.target.value)}
                             maxLength={2}
-                            className="flex h-16 w-full brutal-border border-4 bg-primary text-center text-4xl focus:outline-none focus:bg-primary focus:scale-105 transition-all brutal-shadow-lg brutal-glow"
+                            className="flex h-16 w-full clay-border bg-primary text-center text-4xl focus:outline-none focus:bg-primary focus:scale-105 transition-all clay-shadow-lg rounded-full"
                         />
                     </div>
                     <div className="flex-1">
@@ -113,7 +113,7 @@ export const GoalModal = ({
                             placeholder="What is your mission?"
                             value={title}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-                            className="h-16 bg-black text-2xl font-black uppercase tracking-tighter italic brutal-border border-4 focus:bg-primary/5"
+                            className="h-16 bg-black text-2xl font-black uppercase tracking-tighter italic clay-border focus:bg-primary/5 rounded-2xl"
                         />
                     </div>
                 </div>
@@ -128,12 +128,12 @@ export const GoalModal = ({
                         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
                         placeholder="Detail your path to greatness..."
                         rows={3}
-                        className="w-full brutal-border border-4 bg-black p-4 text-lg font-bold text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:bg-primary/5 transition-all resize-none italic uppercase tracking-tight leading-relaxed"
+                        className="w-full clay-border bg-black p-4 text-lg font-bold text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:bg-primary/5 transition-all resize-none italic uppercase tracking-tight leading-relaxed rounded-2xl"
                     />
                 </div>
 
                 {/* Target Date */}
-                <div className="p-8 brutal-card bg-black border-foreground/50 border-4">
+                <div className="p-8 clay-card bg-black border-foreground/50 rounded-3xl">
                     <div className="flex items-center gap-4 mb-4 text-primary">
                         <Calendar className="h-6 w-6 stroke-[4] drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
                         <span className="text-sm font-black uppercase tracking-[0.3em] italic">
@@ -144,12 +144,12 @@ export const GoalModal = ({
                         type="date"
                         value={targetDate}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => setTargetDate(e.target.value)}
-                        className="h-16 bg-black brutal-border border-4 text-xl font-black uppercase italic focus:bg-primary/5"
+                            className="h-16 bg-black clay-border text-xl font-black uppercase italic focus:bg-primary/5 rounded-full"
                     />
                 </div>
 
                 {/* Milestones */}
-                <div className="p-8 brutal-card bg-black border-foreground/50 border-4">
+                <div className="p-8 clay-card bg-black border-foreground/50 rounded-3xl">
                     <div className="flex items-center gap-4 mb-4 text-primary">
                         <Target className="h-6 w-6 stroke-[4] drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
                         <span className="text-sm font-black uppercase tracking-[0.3em] italic">
@@ -164,12 +164,12 @@ export const GoalModal = ({
                             value={newMilestone}
                             onChange={(e: ChangeEvent<HTMLInputElement>) => setNewMilestone(e.target.value)}
                             onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleAddMilestone()}
-                            className="h-16 bg-black brutal-border border-4 text-xl font-black uppercase italic focus:bg-primary/5"
+                        className="h-16 bg-black clay-border text-xl font-black uppercase italic focus:bg-primary/5 rounded-full"
                         />
                         <Button
                             onClick={handleAddMilestone}
                             disabled={!newMilestone.trim()}
-                            className="h-16 px-8 brutal-border border-4 bg-foreground text-background brutal-shadow-lg hover:-translate-y-1 hover:brutal-glow transition-all active:translate-y-0 active:shadow-none shrink-0"
+                            className="h-16 px-8 clay-border bg-foreground text-background clay-shadow-lg hover:-translate-y-1 transition-all active:translate-y-0 active:shadow-none shrink-0 rounded-full"
                         >
                             <Plus className="h-8 w-8 stroke-[4]" />
                         </Button>
@@ -181,7 +181,7 @@ export const GoalModal = ({
                             {milestones.map((milestone, index) => (
                                 <div
                                     key={milestone.id}
-                                    className="flex items-center justify-between gap-6 p-5 brutal-border border-4 bg-black brutal-shadow-sm hover:brutal-shadow transition-shadow group"
+                                    className="flex items-center justify-between gap-6 p-5 clay-border bg-black clay-shadow-sm hover:clay-shadow transition-shadow group rounded-2xl"
                                 >
                                     <div className="flex items-center gap-5">
                                         <span className="text-sm font-black text-primary w-8 italic">
@@ -195,7 +195,7 @@ export const GoalModal = ({
                                         variant="outline"
                                         size="icon"
                                         onClick={() => handleRemoveMilestone(milestone.id)}
-                                        className="h-12 w-12 brutal-border border-4 bg-red-500 text-white hover:bg-red-600 brutal-shadow-sm active:translate-x-0.5 active:translate-y-0.5 active:shadow-none shadow-none opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="h-12 w-12 clay-border bg-red-500 text-white hover:bg-red-600 clay-shadow-sm active:translate-x-0.5 active:translate-y-0.5 active:shadow-none shadow-none opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
                                     >
                                         <X className="h-6 w-6 stroke-[4]" />
                                     </Button>
@@ -215,14 +215,14 @@ export const GoalModal = ({
                     <Button
                         variant="outline"
                         onClick={onClose}
-                        className="h-20 px-12 text-2xl font-black uppercase italic brutal-btn bg-black text-foreground border-4 border-foreground hover:bg-foreground hover:text-background transition-colors"
+                        className="h-20 px-12 text-2xl font-black uppercase italic clay-btn bg-black text-foreground border-4 border-foreground hover:bg-foreground hover:text-background transition-colors rounded-full"
                     >
                         Abort
                     </Button>
                     <Button
                         onClick={handleSave}
                         disabled={!title.trim() || !targetDate}
-                        className="h-20 px-16 text-2xl font-black uppercase italic brutal-btn bg-primary text-primary-foreground brutal-shadow-lg hover:-translate-y-2 hover:brutal-glow transition-all active:translate-y-0 active:shadow-none shadow-none hover:shadow-none"
+                        className="h-20 px-16 text-2xl font-black uppercase italic clay-btn bg-primary text-primary-foreground clay-shadow-lg hover:-translate-y-2 transition-all active:translate-y-0 active:shadow-none shadow-none hover:shadow-none rounded-full"
                     >
                         {goalToEdit ? "Update Goal" : "Initialize Goal"}
                     </Button>

@@ -24,7 +24,7 @@ export default function Home() {
   if (isAuthLoading || isTasksLoading) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background">
-        <div className="brutal-border bg-primary p-8 brutal-shadow animate-bounce">
+        <div className="glass-border bg-primary/90 p-8 glass-shadow animate-bounce rounded-full backdrop-blur-sm">
           <span className="text-4xl font-black uppercase tracking-tighter text-primary-foreground">Loading...</span>
         </div>
         <div className="mt-10 text-center space-y-2">
@@ -61,9 +61,9 @@ export default function Home() {
 
           {/* Offline Banner - Show when offline with cached data */}
           {(!isOnline && totalTasksToday > 0) && (
-            <div className="my-8 brutal-card bg-accent border-foreground">
+            <div className="my-8 glass-card bg-accent/50 border-foreground/20">
               <div className="flex flex-col sm:flex-row items-center gap-6">
-                <div className="flex items-center justify-center w-16 h-16 brutal-border bg-background shadow-none flex-shrink-0">
+                <div className="flex items-center justify-center w-16 h-16 glass-border bg-background/50 shadow-none flex-shrink-0 rounded-full backdrop-blur-sm">
                   <WifiOff className="w-8 h-8 text-foreground" />
                 </div>
  
@@ -77,8 +77,8 @@ export default function Home() {
                   </p>
  
                   <div className="flex items-center gap-2 justify-center sm:justify-start mt-4">
-                    <div className="flex items-center gap-2 px-4 py-2 brutal-border bg-white text-black">
-                      <div className="w-3 h-3 bg-green-500 brutal-border"></div>
+                    <div className="flex items-center gap-2 px-4 py-2 glass-border bg-white/80 text-black rounded-full backdrop-blur-sm">
+                      <div className="w-3 h-3 bg-green-500 glass-border rounded-full"></div>
                       <span className="text-xs font-black uppercase tracking-widest">Local data safe</span>
                     </div>
                   </div>
@@ -89,7 +89,7 @@ export default function Home() {
 
           {/* Empty State Banner - Only show when online with no tasks */}
           {(!isTasksLoading && totalTasksToday === 0 && isOnline) && (
-            <div className="my-8 brutal-card bg-primary text-primary-foreground border-foreground brutal-shadow-lg">
+            <div className="my-8 glass-card bg-primary/90 text-primary-foreground border-foreground/20 glass-shadow-lg">
               <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-8">
                 <div className="space-y-2">
                   <h3 className="text-3xl font-black uppercase tracking-tighter">Ready to conquer the day?</h3>

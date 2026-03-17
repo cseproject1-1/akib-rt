@@ -148,7 +148,7 @@ export default function GoalsPage() {
           </div>
           <Button
             onClick={handleAddGoal}
-            className="h-20 px-12 text-2xl font-black uppercase italic brutal-btn bg-primary text-primary-foreground brutal-shadow-lg hover:-translate-y-2 hover:brutal-glow transition-all active:translate-y-0 active:shadow-none"
+            className="h-20 px-12 text-2xl font-black uppercase italic glass-btn bg-primary/90 text-primary-foreground glass-shadow-lg hover:-translate-y-2 transition-all active:translate-y-0 active:shadow-none rounded-full backdrop-blur-sm"
           >
             <Plus className="mr-3 h-8 w-8 stroke-[4]" />
             New Goal
@@ -157,12 +157,12 @@ export default function GoalsPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-40">
-            <div className="h-20 w-20 animate-spin brutal-border border-4 border-t-primary" />
+            <div className="h-20 w-20 animate-spin glass-border border-t-primary/90 rounded-full" />
           </div>
         ) : goals.length === 0 ? (
           /* Empty State */
-          <div className="flex flex-col items-center justify-center py-32 brutal-card bg-black border-foreground border-4 border-dashed brutal-shadow-lg">
-            <div className="flex h-32 w-32 items-center justify-center brutal-border border-4 bg-primary mb-10 brutal-shadow-lg brutal-glow rotate-3">
+          <div className="flex flex-col items-center justify-center py-32 glass-card bg-black/80 border-foreground/30 border-4 border-dashed glass-shadow-lg rounded-3xl backdrop-blur-xl">
+            <div className="flex h-32 w-32 items-center justify-center glass-border bg-primary/90 mb-10 glass-shadow-lg rotate-3 rounded-3xl backdrop-blur-sm">
               <Target className="h-16 w-16 text-primary-foreground stroke-[4]" />
             </div>
             <h3 className="text-5xl font-black text-foreground mb-6 uppercase tracking-tighter italic">No Goals Yet</h3>
@@ -172,7 +172,7 @@ export default function GoalsPage() {
             </p>
             <Button
               onClick={handleAddGoal}
-              className="h-20 px-12 text-2xl font-black uppercase italic brutal-btn bg-primary text-primary-foreground brutal-shadow-lg hover:-translate-y-2 hover:brutal-glow transition-all"
+              className="h-20 px-12 text-2xl font-black uppercase italic glass-btn bg-primary/90 text-primary-foreground glass-shadow-lg hover:-translate-y-2 transition-all rounded-full backdrop-blur-sm"
             >
               <Plus className="mr-3 h-8 w-8 stroke-[4]" />
               Create Your First Goal
@@ -187,7 +187,7 @@ export default function GoalsPage() {
             {activeGoals.length > 0 && (
               <div className="space-y-6">
                 <h3 className="text-2xl font-black text-foreground uppercase tracking-[0.3em] italic flex items-center gap-5">
-                  <span className="h-3 w-16 bg-primary brutal-glow"></span>
+                  <span className="h-3 w-16 bg-primary rounded-full"></span>
                   Active Goals ({activeGoals.length})
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

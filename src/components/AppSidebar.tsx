@@ -34,7 +34,7 @@ const PWAInstallButton = () => {
     <div className="mb-4">
       <Button
         onClick={installApp}
-        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground brutal-btn"
+        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground clay-btn"
       >
         <Download className="mr-2 h-4 w-4" />
         Install App
@@ -72,13 +72,13 @@ const AppSidebar: React.FC = () => {
       {/* Sidebar Container - Hidden by default, shown when isOpen is true */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-[70] w-72 transform brutal-border bg-background transition-all duration-500 ease-in-out brutal-shadow-lg",
+          "fixed inset-y-0 left-0 z-[70] w-72 transform glass-border bg-background/90 transition-all duration-500 ease-in-out glass-shadow-lg rounded-r-3xl backdrop-blur-xl",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex h-24 items-center justify-between px-8 border-b brutal-border border-b-muted">
+        <div className="flex h-24 items-center justify-between px-8 border-b glass-border border-b-muted/30">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 overflow-hidden brutal-border brutal-shadow">
+            <div className="h-10 w-10 overflow-hidden glass-border glass-shadow rounded-full backdrop-blur-sm">
               <img src="/logo.jpg" alt="Routine Logo" className="h-full w-full object-cover" />
             </div>
             <span className="text-2xl font-black tracking-tighter text-foreground">RT</span>
@@ -87,7 +87,7 @@ const AppSidebar: React.FC = () => {
             variant="ghost"
             size="icon"
             onClick={() => setIsOpen(false)}
-            className="text-foreground hover:bg-primary hover:text-primary-foreground brutal-border"
+            className="text-foreground hover:bg-primary hover:text-primary-foreground glass-border rounded-full backdrop-blur-sm"
           >
             <X className="w-6 h-6" />
           </Button>
@@ -102,10 +102,10 @@ const AppSidebar: React.FC = () => {
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "group flex items-center gap-4 px-5 py-4 text-sm font-bold uppercase tracking-widest transition-all",
+                  "group flex items-center gap-4 px-5 py-4 text-sm font-bold uppercase tracking-widest transition-all rounded-2xl backdrop-blur-sm",
                   isActive
-                    ? "bg-primary text-primary-foreground brutal-border brutal-shadow shadow-primary/20"
-                    : "text-foreground hover:bg-muted brutal-border border-transparent hover:border-foreground"
+                    ? "bg-primary/90 text-primary-foreground glass-border glass-shadow shadow-primary/20"
+                    : "text-foreground hover:bg-muted/70 glass-border border-transparent hover:border-foreground/30"
                 )}
               >
                 <item.icon className={cn(
@@ -123,15 +123,15 @@ const AppSidebar: React.FC = () => {
           <PWAInstallButton />
 
           {currentUser ? (
-            <div className="group relative brutal-border bg-card p-4 transition-all hover:bg-muted brutal-shadow">
+            <div className="group relative glass-border bg-card/80 p-4 transition-all hover:bg-muted/70 glass-shadow rounded-2xl backdrop-blur-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 opacity-0 transition-opacity group-hover:opacity-100" />
 
               <div className="relative flex items-center gap-3">
-                <div className="relative h-10 w-10 shrink-0 overflow-hidden brutal-border">
+                <div className="relative h-10 w-10 shrink-0 overflow-hidden glass-border rounded-full backdrop-blur-sm">
                   {currentUser.photoURL ? (
                     <img src={currentUser.photoURL} alt={currentUser.displayName || "User"} className="h-full w-full object-cover" />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-primary text-xs font-black text-primary-foreground">
+                    <div className="flex h-full w-full items-center justify-center bg-primary/90 text-xs font-black text-primary-foreground">
                       {currentUser.displayName?.[0]?.toUpperCase() || currentUser.email?.[0]?.toUpperCase() || "U"}
                     </div>
                   )}
@@ -146,12 +146,12 @@ const AppSidebar: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="flex h-8 w-8 cursor-pointer items-center justify-center brutal-border bg-card text-foreground transition-all hover:bg-destructive hover:text-white" onClick={() => logout()}>
+                <div className="flex h-8 w-8 cursor-pointer items-center justify-center glass-border bg-card/80 text-foreground transition-all hover:bg-destructive hover:text-white rounded-full backdrop-blur-sm" onClick={() => logout()}>
                   <LogOut className="h-4 w-4" />
                 </div>
               </div>
 
-              <div className="mt-3 flex items-center gap-2 brutal-border bg-primary px-3 py-1.5 shadow-none">
+              <div className="mt-3 flex items-center gap-2 glass-border bg-primary/90 px-3 py-1.5 shadow-none rounded-full backdrop-blur-sm">
                 <Sparkles className="h-3 w-3 text-primary-foreground fill-primary-foreground" />
                 <span className="text-[10px] font-black uppercase tracking-widest text-primary-foreground">
                   Premium Plan
@@ -159,7 +159,7 @@ const AppSidebar: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="brutal-border bg-card p-4 text-center brutal-shadow">
+            <div className="glass-border bg-card/80 p-4 text-center glass-shadow rounded-2xl backdrop-blur-sm">
               <p className="text-sm font-bold uppercase text-muted-foreground">Please log in</p>
             </div>
           )}

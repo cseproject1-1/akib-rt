@@ -41,21 +41,21 @@ const TimeBlock: React.FC<TimeBlockProps> = ({ block, timeRange, onEditTask }) =
   };
 
   return (
-    <div className={`group flex flex-col h-full brutal-card border-4 border-foreground bg-card p-8 transition-all duration-200 hover:brutal-shadow-lg relative`}>
+    <div className={`group flex flex-col h-full glass-card p-8 transition-all duration-200 hover:glass-shadow-lg relative`}>
       {/* Visual Marker for progress */}
       <div
-        className="absolute top-0 left-0 h-4 bg-primary transition-all duration-1000 brutal-border border-b-2 border-r-2 border-foreground"
+        className="absolute top-0 left-0 h-4 bg-primary/80 transition-all duration-1000 rounded-b-lg"
         style={{ width: `${progress}%` }}
       />
  
       <div className="mb-10 mt-4 flex items-start justify-between">
         <div className="flex items-center gap-6">
-          <div className={`flex h-20 w-20 items-center justify-center brutal-border border-4 bg-background shadow-none transition-transform group-hover:scale-105`}>
+          <div className={`flex h-20 w-20 items-center justify-center glass-border bg-background/50 shadow-none transition-transform group-hover:scale-105 rounded-full backdrop-blur-sm`}>
             {getBlockIcon()}
           </div>
           <div className="space-y-1">
             <h3 className="text-3xl font-black text-foreground uppercase tracking-widest italic leading-none">{block}</h3>
-            <div className="flex items-center gap-2 text-xs font-black text-muted-foreground uppercase tracking-[0.15em] bg-muted px-4 py-1 brutal-border border-2 w-fit">
+            <div className="flex items-center gap-2 text-xs font-black text-muted-foreground uppercase tracking-[0.15em] bg-muted/50 px-4 py-1 glass-border w-fit rounded-full backdrop-blur-sm">
               <Clock className="w-4 h-4" />
               {timeRange}
             </div>
@@ -74,8 +74,8 @@ const TimeBlock: React.FC<TimeBlockProps> = ({ block, timeRange, onEditTask }) =
         {tasks.length > 0 ? (
           tasks.map((task) => <TaskCard key={task.id} task={task} onEdit={onEditTask} />)
         ) : (
-          <div className="h-full min-h-[160px] flex flex-col items-center justify-center brutal-border border-4 border-dashed border-foreground/30 bg-muted/20 p-8 text-center group-hover:border-primary transition-colors">
-            <div className="h-12 w-12 brutal-border border-2 bg-muted flex items-center justify-center mb-4">
+          <div className="h-full min-h-[160px] flex flex-col items-center justify-center glass-border border-dashed border-foreground/20 bg-muted/20 p-8 text-center group-hover:border-primary/50 transition-colors rounded-full backdrop-blur-sm">
+            <div className="h-12 w-12 glass-border bg-muted/50 flex items-center justify-center mb-4 rounded-full backdrop-blur-sm">
               <Sunrise className="w-6 h-6 opacity-40 text-foreground" />
             </div>
             <p className="text-sm font-black text-muted-foreground uppercase tracking-widest italic">No activities scheduled</p>

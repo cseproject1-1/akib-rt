@@ -9,8 +9,8 @@ import { User, Lock, Mail, CheckCircle, Timer, Sparkles, Trophy, ArrowRight, Che
 // --- Components for Landing Page Sections ---
 
 const FeatureCard = ({ icon: Icon, title, description }: any) => (
-    <div className="brutal-card group">
-        <div className="mb-6 inline-flex h-14 w-14 items-center justify-center brutal-border bg-primary transition-transform group-hover:scale-110">
+    <div className="glass-card group rounded-3xl">
+        <div className="mb-6 inline-flex h-14 w-14 items-center justify-center glass-border bg-primary/90 transition-transform group-hover:scale-110 rounded-full backdrop-blur-sm">
             <Icon className="h-7 w-7 text-primary-foreground" />
         </div>
         <h3 className="mb-3 text-xl font-black uppercase text-foreground tracking-tighter">{title}</h3>
@@ -21,8 +21,8 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
 );
 
 const StepCard = ({ number, title, description }: any) => (
-    <div className="brutal-card flex flex-col items-center text-center p-8 bg-background shadow-none hover:shadow-primary/20">
-        <div className="mb-6 flex h-16 w-16 items-center justify-center brutal-border bg-primary text-2xl font-black text-primary-foreground brutal-shadow">
+    <div className="glass-card flex flex-col items-center text-center p-8 bg-background/70 shadow-none hover:shadow-primary/20 rounded-3xl backdrop-blur-sm">
+        <div className="mb-6 flex h-16 w-16 items-center justify-center glass-border bg-primary/90 text-2xl font-black text-primary-foreground glass-shadow rounded-full backdrop-blur-sm">
             {number}
         </div>
         <h3 className="mb-3 text-xl font-black uppercase tracking-tight text-foreground">{title}</h3>
@@ -121,17 +121,17 @@ const LandingPage: React.FC = () => {
 
                     {/* Hero Content */}
                     <div className="flex flex-col items-center text-center lg:items-start lg:text-left space-y-8">
-                        <div className="inline-flex items-center gap-2 brutal-border bg-primary px-4 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground brutal-shadow">
+                        <div className="inline-flex items-center gap-2 glass-border bg-primary/90 px-4 py-2 text-xs font-black uppercase tracking-widest text-primary-foreground glass-shadow rounded-full backdrop-blur-sm">
                             <Sparkles className="w-4 h-4 fill-primary-foreground" />
                             <span>AI-Powered Routine Tracker</span>
                         </div>
  
                         <h1 className="text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] text-foreground">
                             Master Your <br />
-                            <span className="text-primary bg-foreground px-4 py-2 brutal-border block mt-2 w-fit">Daily Flow</span>
+                            <span className="text-primary bg-foreground/90 px-4 py-2 glass-border block mt-2 w-fit rounded-full backdrop-blur-sm">Daily Flow</span>
                         </h1>
  
-                        <p className="text-xl text-muted-foreground font-bold max-w-xl leading-snug brutal-border p-4 bg-muted/50">
+                        <p className="text-xl text-muted-foreground font-bold max-w-xl leading-snug glass-border p-4 bg-muted/40 rounded-2xl backdrop-blur-sm">
                             Build rock-solid habits, track your progress, and achieve your goals with our intelligent focus engine and analytics.
                         </p>
  
@@ -162,7 +162,7 @@ const LandingPage: React.FC = () => {
 
                     {/* Login/Signup Card */}
                     <div className="w-full max-w-md mx-auto lg:ml-auto space-y-8">
-                        <div className="brutal-card p-10 brutal-shadow-lg scale-105 bg-card">
+                        <div className="glass-card p-10 glass-shadow-lg scale-105 bg-card/90 rounded-3xl backdrop-blur-xl">
                             <div className="mb-8 text-center">
                                 <h2 className="text-2xl font-bold text-foreground">
                                     {isRegistering ? "Create your account" : "Welcome back"}
@@ -257,10 +257,10 @@ const LandingPage: React.FC = () => {
             </section>
 
             {/* --- FEATURES SECTION --- */}
-            <section className="py-24 border-y brutal-border bg-muted">
+            <section className="py-24 border-y clay-border bg-muted">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-20 max-w-3xl mx-auto">
-                        <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tighter uppercase leading-none">Everything you need to <span className="bg-primary px-3 brutal-border">excel</span></h2>
+                        <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tighter uppercase leading-none">Everything you need to <span className="bg-primary px-3 clay-border rounded-full">excel</span></h2>
                         <p className="text-xl text-muted-foreground font-bold leading-tight">Our comprehensive suite of tools helps you manage time, track habits, and stay motivated every single day.</p>
                     </div>
  
@@ -313,10 +313,10 @@ const LandingPage: React.FC = () => {
             </section>
  
             {/* --- FOOTER --- */}
-            <footer className="py-16 border-t brutal-border bg-card">
+            <footer className="py-16 border-t glass-border bg-card/80 backdrop-blur-xl">
                 <div className="container mx-auto px-4 text-center">
                     <div className="flex items-center justify-center gap-4 mb-10">
-                        <div className="h-12 w-12 brutal-border bg-primary flex items-center justify-center text-primary-foreground font-black text-xl brutal-shadow">
+                        <div className="h-12 w-12 glass-border bg-primary/90 flex items-center justify-center text-primary-foreground font-black text-xl glass-shadow rounded-full backdrop-blur-sm">
                             RT
                         </div>
                         <span className="text-3xl font-black uppercase tracking-tighter">Routine Tracker</span>
