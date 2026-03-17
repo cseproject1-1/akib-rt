@@ -1,43 +1,49 @@
 @import "tailwindcss";
- 
+
 :root {
-  /* Neo-Brutalism Light Theme */
-  --background: 0 0% 98%;
-  --foreground: 0 0% 10%;
+  /* Pure Amolted Refracted Glass - Light Theme */
+  --background: 210 40% 98%;
+  --foreground: 220 50% 10%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 10%;
-  --primary: 52 100% 45%;
-  --primary-foreground: 0 0% 0%;
-  --muted: 0 0% 95%;
-  --muted-foreground: 0 0% 40%;
-  --border: 0 0% 80%;
-  --accent: 0 0% 90%;
+  --card-foreground: 220 50% 10%;
+  --primary: 260 100% 65%;
+  --primary-foreground: 0 0% 100%;
+  --muted: 210 20% 96%;
+  --muted-foreground: 220 20% 40%;
+  --border: 210 20% 90%;
+  --accent: 200 100% 95%;
   --destructive: 0 84% 60%;
- 
-  --brutal-shadow: 4px 4px 0px hsl(0 0% 25%);
-  --brutal-shadow-lg: 6px 6px 0px hsl(0 0% 20%);
-  --brutal-border: 2px solid hsl(0 0% 10%);
+  
+  /* Refracted Glass specific variables */
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.18);
+  --glass-blur: blur(12px);
+  --glass-radius: 1.5rem;
+  --refraction-color: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 100%);
 }
- 
+
 .dark {
-  /* Neo-Brutalism Dark Theme */
-  --background: 0 0% 0%;
-  --foreground: 0 0% 95%;
-  --card: 0 0% 5%;
-  --card-foreground: 0 0% 95%;
-  --primary: 52 100% 50%;
-  --primary-foreground: 0 0% 0%;
-  --muted: 0 0% 8%;
-  --muted-foreground: 0 0% 50%;
-  --border: 0 0% 25%;
-  --accent: 0 0% 15%;
+  /* Pure Amolted Refracted Glass - Dark Theme */
+  --background: 220 40% 5%;
+  --foreground: 220 40% 95%;
+  --card: 220 40% 10%;
+  --card-foreground: 220 40% 95%;
+  --primary: 260 100% 75%;
+  --primary-foreground: 0 0% 100%;
+  --muted: 220 20% 15%;
+  --muted-foreground: 220 20% 65%;
+  --border: 220 20% 20%;
+  --accent: 200 100% 20%;
   --destructive: 0 84% 60%;
- 
-  --brutal-shadow: 4px 4px 0px hsl(0 0% 15%);
-  --brutal-shadow-lg: 6px 6px 0px hsl(0 0% 10%);
-  --brutal-border: 2px solid hsl(0 0% 30%);
+  
+  /* Refracted Glass specific variables */
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(12px);
+  --glass-radius: 1.5rem;
+  --refraction-color: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.02) 100%);
 }
- 
+
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -50,67 +56,92 @@
   --color-border: hsl(var(--border));
   --color-accent: hsl(var(--accent));
   --color-destructive: hsl(var(--destructive));
- 
+  
   --font-sans: var(--font-space-grotesk);
   --font-mono: var(--font-space-mono);
- 
+  
   --radius-none: 0;
-  --radius-sm: 0;
-  --radius-md: 0;
-  --radius-lg: 0;
-  --radius-xl: 0;
+  --radius-sm: 0.75rem;
+  --radius-md: 1.25rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-full: 9999px;
 }
- 
-@utility brutal-shadow {
-  box-shadow: var(--brutal-shadow);
+
+@utility glass-shadow {
+  box-shadow: var(--glass-shadow);
 }
- 
-@utility brutal-shadow-lg {
-  box-shadow: var(--brutal-shadow-lg);
+
+@utility glass-border {
+  border: var(--glass-border);
+  backdrop-filter: var(--glass-blur);
 }
- 
-@utility brutal-border {
-  border: var(--brutal-border);
-}
- 
-@utility brutal-card {
-  border: var(--brutal-border);
-  box-shadow: var(--brutal-shadow);
-  background-color: var(--color-card);
+
+@utility glass-card {
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-card) 70%, transparent) 0%,
+    color-mix(in srgb, var(--color-card) 85%, transparent) 100%
+  );
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   padding: 1.5rem;
+  border-radius: var(--glass-radius);
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
- 
+  transition-duration: 200ms;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--refraction-color);
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  
   &:hover {
-    box-shadow: 2px 2px 0px hsl(0 0% 20%);
-    transform: translate(2px, 2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
   }
 }
- 
-@utility brutal-btn {
-  border: var(--brutal-border);
-  box-shadow: var(--brutal-shadow);
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  font-weight: 700;
+
+@utility glass-btn {
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--glass-radius);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  background: linear-gradient(135deg, 
+    color-mix(in srgb, var(--color-primary) 80%, transparent) 0%,
+    color-mix(in srgb, var(--color-primary) 90%, transparent) 100%
+  );
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-weight: 600;
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
- 
+  
   &:active {
-    transform: translate(2px, 2px);
-    box-shadow: none;
+    transform: scale(0.98);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 }
- 
+
 @utility glass-effect {
-  backdrop-filter: blur(12px);
-  background-color: color-mix(in srgb, var(--color-background) 70%, transparent);
-  border-bottom-width: 1px;
-  border-color: var(--color-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  background: color-mix(in srgb, var(--color-background) 60%, transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -120,16 +151,30 @@ body {
   @apply antialiased transition-colors duration-200 min-h-screen;
 }
 
-/* Custom Scrollbar for Neo-Brutalism */
+/* Custom Scrollbar for Refracted Glass */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--background));
+  background: color-mix(in srgb, var(--color-background) 80%, transparent);
+  border-radius: var(--glass-radius);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary));
-  border: 2px solid hsl(var(--foreground));
+  background: color-mix(in srgb, var(--color-primary) 30%, var(--color-muted));
+  border-radius: var(--glass-radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Refraction animation keyframes */
+@keyframes refract {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.refraction-animate {
+  background-size: 200% 200%;
+  animation: refract 3s ease infinite;
 }

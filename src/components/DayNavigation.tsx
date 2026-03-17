@@ -54,16 +54,16 @@ const DayNavigation: React.FC = () => {
               onClick={() => setSelectedDay(day)}
               className={cn(
                 "group relative flex flex-col items-center justify-center transition-all duration-200",
-                "h-40 w-32 brutal-border",
+                "h-40 w-32 glass-border rounded-3xl backdrop-blur-sm",
                 isSelected
-                  ? "bg-primary text-primary-foreground brutal-shadow-lg z-10 -translate-y-2 border-4 border-foreground"
-                  : "bg-background text-muted-foreground hover:bg-muted brutal-shadow border-4 border-foreground"
+                  ? "bg-primary/90 text-primary-foreground glass-shadow-lg z-10 -translate-y-2 border-4 border-foreground/30"
+                  : "bg-background/70 text-muted-foreground hover:bg-muted/70 glass-shadow border-4 border-foreground/20"
               )}
             >
               {isActualToday && (
                 <div className={cn(
-                  "absolute top-4 left-4 h-4 w-4 brutal-border",
-                  isSelected ? "bg-white" : "bg-primary"
+                  "absolute top-4 left-4 h-4 w-4 glass-border rounded-full",
+                  isSelected ? "bg-white/90" : "bg-primary/90"
                 )} />
               )}
               <span className={cn(
@@ -82,8 +82,8 @@ const DayNavigation: React.FC = () => {
                 </span>
  
                 <div className={cn(
-                  "h-3 w-20 brutal-border border-2 overflow-hidden",
-                  isSelected ? "bg-black/20" : "bg-muted"
+                  "h-3 w-20 glass-border overflow-hidden rounded-full",
+                  isSelected ? "bg-black/20" : "bg-muted/50"
                 )}>
                   <div
                     className={cn("h-full transition-all duration-1000", isSelected ? "bg-white" : "bg-primary")}

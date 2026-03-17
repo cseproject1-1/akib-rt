@@ -58,7 +58,7 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
 
     if (goals.length === 0) {
         return (
-            <div className="brutal-card p-12 text-center bg-background border-foreground">
+            <div className="clay-card p-12 text-center bg-background border-foreground rounded-3xl">
                 <Target className="h-16 w-16 text-muted-foreground/30 mx-auto mb-6" />
                 <h3 className="text-2xl font-black uppercase tracking-tighter italic text-foreground mb-3">No Goals Yet</h3>
                 <p className="text-base font-bold text-muted-foreground uppercase italic tracking-tight">
@@ -69,10 +69,10 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
     }
 
     return (
-        <div className="brutal-card p-10 bg-black border-4 border-foreground brutal-shadow-lg">
+        <div className="clay-card p-10 bg-black border-foreground clay-shadow-lg rounded-3xl">
             {/* Header */}
             <div className="flex items-center gap-6 mb-12">
-                <div className="h-16 w-16 brutal-border border-4 bg-primary flex items-center justify-center brutal-shadow-sm transition-transform hover:scale-110 hover:rotate-3">
+                <div className="h-16 w-16 clay-border bg-primary flex items-center justify-center clay-shadow-sm transition-transform hover:scale-110 hover:rotate-3 rounded-2xl">
                     <CalendarDays className="h-8 w-8 text-primary-foreground stroke-[3]" />
                 </div>
                 <div>
@@ -90,7 +90,7 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
 
                 {/* Today Marker */}
                 <div className="absolute left-2.5 top-0 z-10 flex items-center">
-                    <div className="h-8 w-8 brutal-border border-4 bg-primary flex items-center justify-center shadow-none brutal-glow">
+                    <div className="h-8 w-8 clay-border bg-primary flex items-center justify-center shadow-none rounded-full">
                         <div className="h-3 w-3 bg-foreground" />
                     </div>
                     <span className="ml-6 text-sm font-black uppercase tracking-[0.4em] italic text-primary">Today</span>
@@ -117,7 +117,7 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
                                 onClick={() => onGoalClick?.(goal)}
                             >
                                 {/* Timeline Node */}
-                                <div className={`absolute left-3 top-6 h-8 w-8 brutal-border border-4 flex items-center justify-center transition-all group-hover:scale-125 group-hover:brutal-glow ${status === "completed"
+                                <div className={`absolute left-3 top-6 h-8 w-8 clay-border flex items-center justify-center transition-all group-hover:scale-125 rounded-full ${status === "completed"
                                         ? "bg-green-500 border-green-500"
                                         : status === "overdue"
                                             ? "bg-red-500 border-red-500"
@@ -131,7 +131,7 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
                                 </div>
 
                                 {/* Goal Card */}
-                                <div className={`p-6 brutal-border border-4 ${statusBg[status as keyof typeof statusBg]} transition-all group-hover:-translate-y-2 brutal-shadow-sm group-hover:brutal-shadow-lg shadow-none group-hover:shadow-none bg-black`}>
+                                <div className={`p-6 clay-border ${statusBg[status as keyof typeof statusBg]} transition-all group-hover:-translate-y-2 clay-shadow-sm group-hover:clay-shadow-lg shadow-none group-hover:shadow-none bg-black rounded-2xl`}>
                                     <div className="flex items-start justify-between gap-6">
                                         <div className="flex-1 min-w-0">
                                             {/* Goal Title */}
@@ -154,7 +154,7 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
                                             {(progress > 0 || goal.isCompleted) && (
                                                 <div className="flex items-center gap-4">
                                                     <MilestoneIcon className="h-5 w-5 text-primary stroke-[3]" />
-                                                    <div className="flex-1 h-4 brutal-border border-2 bg-black overflow-hidden shadow-none">
+                                                    <div className="flex-1 h-4 clay-border bg-black overflow-hidden shadow-none rounded-full">
                                                         <div
                                                             className={`h-full transition-all duration-1000 ease-out ${status === "completed" ? "bg-green-500" : "bg-primary"}`}
                                                             style={{ width: `${progress}%` }}
@@ -200,7 +200,7 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
                     { status: "completed", label: "Completed" },
                 ].map(({ status, label }) => (
                     <div key={status} className="flex items-center gap-4 group/l cursor-help">
-                        <div className={`h-5 w-5 brutal-border border-2 transition-transform group-hover/l:scale-125 ${statusColors[status as keyof typeof statusColors]}`} />
+                        <div className={`h-5 w-5 clay-border transition-transform group-hover/l:scale-125 rounded-full ${statusColors[status as keyof typeof statusColors]}`} />
                         <span className="text-xs font-black uppercase tracking-[0.2em] italic text-muted-foreground group-hover/l:text-foreground transition-colors">{label}</span>
                     </div>
                 ))}

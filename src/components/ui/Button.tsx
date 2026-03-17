@@ -14,20 +14,20 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", ...props }, ref) => {
     const variants = {
-      primary: "bg-primary text-primary-foreground brutal-btn",
-      secondary: "bg-foreground text-background brutal-btn",
-      outline: "bg-transparent text-foreground brutal-border brutal-btn shadow-none hover:bg-muted",
+      primary: "text-primary-foreground glass-btn",
+      secondary: "text-background glass-btn",
+      outline: "bg-transparent text-foreground glass-border glass-btn shadow-none hover:bg-muted",
       ghost: "bg-transparent text-foreground hover:bg-muted font-bold",
-      danger: "bg-destructive text-white brutal-btn",
-      gradient: "bg-primary text-primary-foreground brutal-btn", // Fallback for neo-brutalism
+      danger: "bg-destructive text-white glass-btn",
+      gradient: "text-primary-foreground glass-btn", // Fallback for refracted glass
     };
 
     const sizes = {
-      sm: "h-9 px-4 text-xs font-bold uppercase tracking-wider",
-      md: "h-12 px-6 py-2 text-sm font-bold uppercase tracking-tight",
-      lg: "h-14 px-8 text-base font-bold uppercase tracking-tight",
-      xl: "h-16 px-10 text-lg font-bold uppercase tracking-tight",
-      icon: "h-12 w-12 p-0 flex items-center justify-center brutal-border brutal-shadow bg-card hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all",
+      sm: "h-9 px-4 text-xs font-bold uppercase tracking-wider rounded-full",
+      md: "h-12 px-6 py-2 text-sm font-bold uppercase tracking-tight rounded-full",
+      lg: "h-14 px-8 text-base font-bold uppercase tracking-tight rounded-full",
+      xl: "h-16 px-10 text-lg font-bold uppercase tracking-tight rounded-full",
+      icon: "h-12 w-12 p-0 flex items-center justify-center glass-border glass-shadow bg-card rounded-full hover:shadow-none transition-all",
     };
 
     return (

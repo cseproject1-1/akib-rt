@@ -135,7 +135,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
   }, [nextTask]);
 
   return (
-    <div className="relative w-full brutal-card bg-primary p-6 sm:p-10 mb-8 sm:mb-12 border-foreground/30 brutal-shadow-lg">
+    <div className="relative w-full glass-card bg-primary/90 p-6 sm:p-10 mb-8 sm:mb-12 border-foreground/30 glass-shadow-lg">
  
       {/* Celebration Confetti Effect */}
       {showCelebration && (
@@ -166,7 +166,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8 lg:gap-12 text-primary-foreground">
         <div className="space-y-6 flex-1">
           {/* Date Badge */}
-          <div className="flex items-center gap-3 bg-foreground/10 w-fit px-4 py-2 brutal-border border-foreground/20">
+          <div className="flex items-center gap-3 bg-foreground/10 w-fit px-4 py-2 glass-border border-foreground/20 rounded-full backdrop-blur-sm">
             <CalendarIcon className="w-4 h-4 text-foreground" />
             <span className="text-xs font-black tracking-widest uppercase">
               {format(todayDate, "EEEE, MMMM d, yyyy")}
@@ -178,13 +178,13 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
             <h2 className="text-4xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.85] uppercase italic">
               {greeting.title}
             </h2>
-            <p className="text-xl font-bold uppercase tracking-tight max-w-lg bg-foreground text-background px-4 py-1 brutal-border inline-block">
+            <p className="text-xl font-bold uppercase tracking-tight max-w-lg bg-foreground/90 text-background px-4 py-1 glass-border inline-block rounded-full backdrop-blur-sm">
               {greeting.subtitle}
             </p>
           </div>
  
           {/* Rotating Quote */}
-          <div className="flex items-start gap-4 bg-muted/20 p-4 brutal-border border-foreground/20 max-w-lg">
+          <div className="flex items-start gap-4 bg-muted/30 p-4 glass-border border-foreground/20 max-w-lg rounded-2xl backdrop-blur-sm">
             <Sparkles className="w-6 h-6 text-foreground shrink-0 mt-1" />
             <p className="text-sm font-bold leading-snug uppercase italic transition-opacity duration-500">
               "{quotes[currentQuoteIndex]}"
@@ -195,7 +195,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
           <div className="flex flex-wrap gap-4 pt-4">
             <Button
               onClick={onAddTask}
-              className="bg-foreground text-background hover:bg-background hover:text-foreground font-black px-10 h-16 text-xl brutal-border border-4"
+              className="bg-foreground/90 text-background hover:bg-background hover:text-foreground font-black px-10 h-16 text-xl glass-border rounded-full backdrop-blur-sm"
             >
               <Plus className="mr-2 h-7 w-7" /> Create Task
             </Button>
@@ -211,7 +211,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
                 });
                 if (confirmed) resetDay();
               }}
-              className="bg-transparent text-foreground hover:bg-foreground/10 font-black h-16 px-8 text-lg brutal-border border-4"
+              className="bg-transparent text-foreground hover:bg-foreground/10 font-black h-16 px-8 text-lg glass-border rounded-full backdrop-blur-sm"
             >
               <RotateCcw className="mr-2 h-6 w-6" /> Reset Today
             </Button>
@@ -219,7 +219,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
         </div>
  
         {/* Stats Card */}
-        <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row items-stretch sm:items-center gap-8 bg-background p-8 brutal-card border-4 border-foreground shadow-[12px_12px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_rgba(255,255,0,1)]">
+        <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row items-stretch sm:items-center gap-8 bg-background/80 p-8 glass-card border-foreground/20 glass-shadow-lg rounded-3xl backdrop-blur-xl">
  
           {/* Progress Ring */}
           <div className="relative flex items-center justify-center mx-auto sm:mx-0">
@@ -264,9 +264,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
  
             {/* Status Badge */}
             <div className="flex items-center gap-3">
-              <div className={`flex h-8 w-8 items-center justify-center brutal-border border-2 transition-all ${dailyProgress === 100 && totalTasksToday > 0
-                ? "bg-primary text-primary-foreground animate-bounce"
-                : "bg-foreground text-background"
+              <div className={`flex h-8 w-8 items-center justify-center glass-border transition-all rounded-full backdrop-blur-sm ${dailyProgress === 100 && totalTasksToday > 0
+                ? "bg-primary/90 text-primary-foreground animate-bounce"
+                : "bg-foreground/90 text-background"
                 }`}>
                 {dailyProgress === 100 && totalTasksToday > 0 ? (
                   <Trophy className="w-5 h-5" />
@@ -282,8 +282,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
  
             {/* Next Task Preview */}
             {nextTask && (
-              <div className="flex items-center gap-4 brutal-border border-2 p-3 bg-muted/20">
-                <div className="flex h-12 w-12 items-center justify-center brutal-border border-2 bg-primary text-2xl shrink-0">
+              <div className="flex items-center gap-4 clay-border p-3 bg-muted/20 rounded-2xl">
+                <div className="flex h-12 w-12 items-center justify-center clay-border bg-primary text-2xl shrink-0 rounded-full">
                   {nextTask.icon}
                 </div>
                 <div className="flex-1 min-w-0">

@@ -27,19 +27,19 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
     <div
       onClick={() => onEdit(task)}
       className={cn(
-        "group relative flex cursor-pointer items-center brutal-border border-4 p-5 transition-all duration-200",
+        "group relative flex cursor-pointer items-center glass-border p-5 transition-all duration-200 rounded-2xl backdrop-blur-sm",
         task.isCompleted
           ? "bg-muted/40 border-foreground/30 opacity-70 grayscale"
-          : "bg-background border-foreground hover:brutal-shadow active:translate-x-0.5 active:translate-y-0.5"
+          : "bg-background/70 border-foreground/30 hover:glass-shadow active:translate-x-0.5 active:translate-y-0.5"
       )}
     >
       <button
         onClick={handleToggle}
         className={cn(
-          "mr-5 flex h-12 w-12 shrink-0 items-center justify-center brutal-border border-4 transition-all duration-200 relative z-20",
+          "mr-5 flex h-12 w-12 shrink-0 items-center justify-center glass-border transition-all duration-200 relative z-20 rounded-full backdrop-blur-sm",
           task.isCompleted
             ? "bg-primary text-primary-foreground scale-100"
-            : "bg-background hover:bg-muted"
+            : "bg-background/70 hover:bg-muted/70"
         )}
       >
         {task.isCompleted ? (
@@ -50,8 +50,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
       </button>
  
       <div className={cn(
-        "mr-5 flex h-16 w-16 shrink-0 items-center justify-center brutal-border border-4 text-4xl shadow-none transition-all group-hover:scale-110 group-hover:-rotate-3",
-        task.isCompleted ? "bg-muted" : "bg-primary italic"
+        "mr-5 flex h-16 w-16 shrink-0 items-center justify-center glass-border text-4xl shadow-none transition-all group-hover:scale-110 group-hover:-rotate-3 rounded-2xl backdrop-blur-sm",
+        task.isCompleted ? "bg-muted/70" : "bg-primary/90 italic"
       )}>
         <span className="filter drop-shadow-sm">{task.icon || "📝"}</span>
       </div>
@@ -64,12 +64,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
           {task.title}
         </h3>
         <div className="flex items-center gap-4 mt-2">
-          <div className="flex items-center gap-2 text-xs font-black text-muted-foreground uppercase tracking-widest bg-muted px-3 py-1 brutal-border border-2">
+          <div className="flex items-center gap-2 text-xs font-black text-muted-foreground uppercase tracking-widest bg-muted/50 px-3 py-1 glass-border rounded-full backdrop-blur-sm">
             <Clock className="w-4 h-4 text-primary" />
             {task.startTime}
           </div>
           {task.reminder && (
-            <div className="flex items-center gap-2 text-xs text-primary font-black uppercase tracking-widest bg-primary/10 px-3 py-1 brutal-border border-2 border-primary/30">
+            <div className="flex items-center gap-2 text-xs text-primary font-black uppercase tracking-widest bg-primary/20 px-3 py-1 glass-border border-primary/30 rounded-full backdrop-blur-sm">
               <Bell className="w-4 h-4" />
               <span>{task.reminder}</span>
             </div>
