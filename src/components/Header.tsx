@@ -23,7 +23,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-24 items-center justify-between glass-border bg-background/80 backdrop-blur-xl px-6 md:px-12 rounded-b-3xl">
+      <header className="sticky top-0 z-40 flex h-24 items-center justify-between glass-border bg-background/90 backdrop-blur-lg px-6 md:px-12 rounded-b-3xl">
         <Link href="/" className="flex items-center gap-4 hover:translate-x-1 transition-transform">
           <div className="h-12 w-12 glass-border bg-primary/90 flex items-center justify-center text-primary-foreground font-black text-xl glass-shadow rounded-full backdrop-blur-sm">
             RT

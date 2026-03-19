@@ -14,7 +14,7 @@ export const PWAInstallPrompt: React.FC = () => {
     if (!user || !isInstallable || !showPrompt) return null;
 
     return (
-        <div className="fixed bottom-20 left-4 right-4 sm:left-auto sm:right-6 sm:w-80 z-50 animate-in slide-in-from-bottom-4 duration-500">
+        <div className="fixed bottom-20 left-4 right-4 sm:left-auto sm:right-6 sm:w-80 z-50 max-w-[calc(100vw-2rem)] animate-in slide-in-from-bottom-4 duration-500">
             <div className="relative rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 p-[1px] shadow-2xl shadow-purple-500/30">
                 <div className="rounded-2xl bg-background/95 backdrop-blur-xl p-4">
                     {/* Close button */}

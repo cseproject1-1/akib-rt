@@ -165,7 +165,7 @@ export const AchievementUnlockToast: React.FC<AchievementUnlockToastProps> = ({
 }) => {
     return (
         <div
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-500"
+            className="fixed bottom-32 left-1/2 -translate-x-1/2 z-[55] animate-in slide-in-from-bottom-4 fade-in duration-500"
             onClick={onDismiss}
         >
             <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl p-1 shadow-2xl shadow-purple-500/30">

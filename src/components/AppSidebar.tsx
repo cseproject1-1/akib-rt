@@ -72,7 +72,7 @@ const AppSidebar: React.FC = () => {
       {/* Sidebar Container - Hidden by default, shown when isOpen is true */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-[70] w-72 transform glass-border bg-background/90 transition-all duration-500 ease-in-out glass-shadow-lg rounded-r-3xl backdrop-blur-xl",
+          "fixed inset-y-0 left-0 z-[70] w-72 transform glass-border bg-background/95 transition-all duration-500 ease-in-out glass-shadow-lg rounded-r-3xl backdrop-blur-lg overflow-hidden",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -93,7 +93,7 @@ const AppSidebar: React.FC = () => {
           </Button>
         </div>
 
-        <nav className="space-y-4 px-4 py-8">
+        <nav className="space-y-4 px-4 py-8 overflow-y-auto max-h-[calc(100vh-12rem)] pb-24 scrollbar-hide">
           {ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (

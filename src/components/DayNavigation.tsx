@@ -56,7 +56,7 @@ const DayNavigation: React.FC = () => {
                 "group relative flex flex-col items-center justify-center transition-all duration-200",
                 "h-40 w-32 glass-border rounded-3xl backdrop-blur-sm",
                 isSelected
-                  ? "bg-primary/90 text-primary-foreground glass-shadow-lg z-10 -translate-y-2 border-4 border-foreground/30"
+                  ? "bg-primary/90 text-primary-foreground glass-shadow-lg z-10 -translate-y-2 border-4 border-foreground/30 ring-2 ring-primary/30"
                   : "bg-background/70 text-muted-foreground hover:bg-muted/70 glass-shadow border-4 border-foreground/20"
               )}
             >

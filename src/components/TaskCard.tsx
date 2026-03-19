@@ -56,7 +56,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit }) => {
         <span className="filter drop-shadow-sm">{task.icon || "📝"}</span>
       </div>
  
-      <div className="flex-1 overflow-hidden pointer-events-none relative z-10">
+      <div className="flex-1 overflow-hidden relative z-10">
         <h3 className={cn(
           "truncate text-2xl font-black tracking-tighter transition-all uppercase italic leading-none",
           task.isCompleted ? "text-muted-foreground line-through decoration-4 decoration-foreground/30" : "text-foreground"

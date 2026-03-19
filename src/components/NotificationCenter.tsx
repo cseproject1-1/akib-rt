@@ -46,7 +46,7 @@ export const NotificationCenter: React.FC = () => {
             </Button>
 
             {isOpen && (
-                <div className="fixed inset-x-4 top-24 md:absolute md:inset-auto md:right-0 md:top-full md:mt-4 w-auto md:w-96 rounded-3xl border border-border bg-background/95 backdrop-blur-2xl shadow-2xl ring-1 ring-black/5 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top md:origin-top-right">
+                <div className="fixed inset-x-4 top-28 md:absolute md:inset-auto md:right-0 md:top-full md:mt-4 w-auto md:w-96 max-w-[calc(100vw-2rem)] rounded-3xl border border-border bg-background/95 backdrop-blur-xl shadow-2xl ring-1 ring-black/5 z-[55] overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top md:origin-top-right">
                     <div className="flex items-center justify-between p-4 border-b border-border/50">
                         <div className="flex items-center gap-2">
                             <h3 className="font-bold text-foreground">Notifications</h3>

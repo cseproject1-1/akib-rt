@@ -88,7 +88,7 @@ const LoginScreen: React.FC = () => {
   if (user && !isEmailVerified) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none -z-10" />
 
         <div className="w-full max-w-md z-10 space-y-8">
           <div className="flex flex-col items-center">
@@ -138,7 +138,7 @@ const LoginScreen: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 relative overflow-hidden">
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/5 blur-[120px] rounded-full pointer-events-none -z-10" />
 
       <div className="w-full max-w-md z-10 space-y-8">
         <div className="flex flex-col items-center">

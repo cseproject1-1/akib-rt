@@ -60,7 +60,7 @@ export const GoalCard = ({
                     ? "bg-green-500/10 border-green-500 clay-shadow-sm"
                     : isOverdue
                         ? "bg-red-500/10 border-red-500 clay-shadow-sm"
-                        : "bg-black border-foreground clay-shadow-lg hover:-translate-y-2 active:translate-y-0 active:shadow-none"
+                        : "bg-black border-foreground clay-shadow-lg hover:-translate-y-2 hover:z-10 hover:relative active:translate-y-0 active:shadow-none"
             )}
         >
             <div className="p-6 clay-border border-0 border-b-4 border-foreground bg-muted/30">
