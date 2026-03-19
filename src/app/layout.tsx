@@ -119,7 +119,7 @@ export default function RootLayout({
           <PWAInstallPrompt />
           <KeyboardShortcuts />
           <OfflineIndicator />
-          <Toaster richColors position="top-right" />
+          <Toaster richColors position="top-right" style={{ zIndex: 90 } as any} />
         </Providers>
       </body>
     </html>

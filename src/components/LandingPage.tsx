@@ -114,8 +114,8 @@ const LandingPage: React.FC = () => {
             {/* --- HERO SECTION --- */}
             <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20 lg:py-32">
                 {/* Background Effects */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none" />
-                <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-purple-600/10 blur-[120px] rounded-full pointer-events-none -z-10" />
+                <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] -z-10" />
 
                 <div className="container relative z-10 grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-24 items-center">
 

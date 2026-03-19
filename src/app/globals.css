@@ -15,7 +15,7 @@
   --destructive: 0 84% 60%;
   
   /* Refracted Glass specific variables */
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --glass-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   --glass-border: 1px solid rgba(255, 255, 255, 0.18);
   --glass-blur: blur(12px);
   --glass-radius: 1.5rem;
@@ -37,7 +37,7 @@
   --destructive: 0 84% 60%;
   
   /* Refracted Glass specific variables */
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   --glass-border: 1px solid rgba(255, 255, 255, 0.1);
   --glass-blur: blur(12px);
   --glass-radius: 1.5rem;
@@ -88,11 +88,12 @@
   -webkit-backdrop-filter: var(--glass-blur);
   padding: 1.5rem;
   border-radius: var(--glass-radius);
-  transition-property: all;
+  transition-property: box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
   position: relative;
-  overflow: hidden;
+  overflow: clip;
+  isolation: isolate;
   
   &::before {
     content: '';
@@ -104,11 +105,11 @@
     background: var(--refraction-color);
     pointer-events: none;
     border-radius: inherit;
+    z-index: 0;
   }
   
   &:hover {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
   }
 }
 

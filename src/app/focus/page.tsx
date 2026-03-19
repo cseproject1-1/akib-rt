@@ -296,7 +296,7 @@ export default function FocusPage() {
         />
       )}
 
-      <footer className="absolute bottom-8 left-0 w-full text-center px-6 pointer-events-none">
+      <footer className="relative bottom-0 left-0 w-full text-center px-6 py-8 pointer-events-none">
         <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-[0.5em]">
           Synchronize your mind • Deep work protocol
         </p>

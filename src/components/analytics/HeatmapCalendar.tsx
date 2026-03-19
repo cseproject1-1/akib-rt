@@ -156,8 +156,8 @@ export const HeatmapCalendar: React.FC<HeatmapCalendarProps> = ({
             {/* Tooltip */}
             {hoveredDay && (
                 <div
-                    className="fixed z-50 px-3 py-2 text-xs font-medium bg-popover border border-border rounded-lg shadow-xl pointer-events-none transform -translate-x-1/2 -translate-y-full"
-                    style={{ left: hoveredDay.x, top: hoveredDay.y - 8 }}
+                    className="fixed z-50 px-3 py-2 text-xs font-medium bg-popover border border-border rounded-lg shadow-xl pointer-events-none transform -translate-x-1/2"
+                    style={{ left: Math.max(60, Math.min(hoveredDay.x, window.innerWidth - 60)), top: Math.max(50, hoveredDay.y - 8), transform: 'translateX(-50%) translateY(-100%)' }}
                 >
                     <div className="text-foreground font-bold">{hoveredDay.count} tasks</div>
                     <div className="text-muted-foreground">

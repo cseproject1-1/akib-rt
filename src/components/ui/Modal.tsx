@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { Button } from "./Button";
 import { clsx, type ClassValue } from "clsx";
@@ -16,31 +16,44 @@ interface ModalProps {
   className?: string;
 }
 
+let openModalCount = 0;
+
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, className }) => {
+  const hasLockedBody = useRef(false);
+
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+      if (!hasLockedBody.current) {
+        openModalCount++;
+        hasLockedBody.current = true;
+        document.body.style.overflow = "hidden";
+      }
     }
     return () => {
-      document.body.style.overflow = "unset";
+      if (hasLockedBody.current) {
+        openModalCount--;
+        hasLockedBody.current = false;
+        if (openModalCount <= 0) {
+          openModalCount = 0;
+          document.body.style.overflow = "unset";
+        }
+      }
     };
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-md transition-opacity animate-in fade-in duration-300"
+        className="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm transition-opacity animate-in fade-in duration-300"
         onClick={onClose}
       />
 
       {/* Modal Content */}
       <div className={cn(
-        "relative w-full max-w-lg overflow-hidden glass-card p-8 glass-border glass-shadow-lg transition-all animate-in zoom-in-95 slide-in-from-bottom-5 duration-300 rounded-3xl backdrop-blur-xl",
+        "relative w-full max-w-lg glass-card p-8 glass-border glass-shadow-lg transition-all animate-in zoom-in-95 slide-in-from-bottom-5 duration-300 rounded-3xl backdrop-blur-xl",
         className
       )}>
         <div className="mb-6 flex items-center justify-between">

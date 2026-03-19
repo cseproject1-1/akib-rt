@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Modal } from "./ui/Modal";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
@@ -75,6 +76,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, taskToEdit, defa
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [reminder, setReminder] = useState("");
   const [showIconPicker, setShowIconPicker] = useState(false);
+  const iconButtonRef = useRef<HTMLButtonElement>(null);
 
   const resetForm = () => {
     setTitle("");
@@ -187,6 +189,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, taskToEdit, defa
             <label className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] italic">Icon</label>
             <div className="relative">
               <button
+                ref={iconButtonRef}
                 type="button"
                 onClick={() => setShowIconPicker(!showIconPicker)}
                 className="flex h-16 w-full items-center justify-center gap-3 glass-border bg-background/70 text-4xl hover:bg-muted/70 transition-all active:translate-y-1 active:translate-x-1 rounded-2xl backdrop-blur-sm"
@@ -194,29 +197,36 @@ const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, taskToEdit, defa
                 {icon}
                 <Smile className="w-5 h-5 text-muted-foreground" />
               </button>
- 
-              {/* Icon Picker Dropdown */}
-              {showIconPicker && (
-                <div className="absolute top-full left-0 mt-4 p-6 glass-border bg-background/90 z-50 glass-shadow-lg w-[320px] rounded-3xl backdrop-blur-xl">
-                  <div className="grid grid-cols-5 gap-3">
-                    {TASK_ICONS.map((emoji) => (
-                      <button
-                        key={emoji}
-                        type="button"
-                        onClick={() => selectIcon(emoji)}
-                        className={cn(
-                          "h-12 w-12 glass-border text-2xl flex items-center justify-center transition-all hover:bg-primary/20 hover:scale-110 rounded-full backdrop-blur-sm",
-                          "font-emoji",
-                          icon === emoji ? "bg-primary/90 border-foreground glass-shadow scale-110 -translate-y-1" : "bg-muted/70"
-                        )}
-                      >
-                        {emoji}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
+ 
+            {/* Icon Picker Dropdown - Portal to avoid overflow-hidden clipping */}
+            {showIconPicker && typeof window !== "undefined" && iconButtonRef.current && createPortal(
+              <div
+                className="fixed z-[120] p-6 glass-border bg-background/90 glass-shadow-lg w-[320px] rounded-3xl backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150"
+                style={{
+                  top: iconButtonRef.current.getBoundingClientRect().bottom + 16,
+                  left: iconButtonRef.current.getBoundingClientRect().left,
+                }}
+              >
+                <div className="grid grid-cols-5 gap-3">
+                  {TASK_ICONS.map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      onClick={() => selectIcon(emoji)}
+                      className={cn(
+                        "h-12 w-12 glass-border text-2xl flex items-center justify-center transition-all hover:bg-primary/20 hover:scale-110 rounded-full backdrop-blur-sm",
+                        "font-emoji",
+                        icon === emoji ? "bg-primary/90 border-foreground glass-shadow scale-110 -translate-y-1" : "bg-muted/70"
+                      )}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>,
+              document.body
+            )}
           </div>
           <div className="flex-1 space-y-3">
             <label className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em] italic">Task Name</label>

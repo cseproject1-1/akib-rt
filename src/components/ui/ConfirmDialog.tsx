@@ -122,7 +122,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     return (
         <div
             ref={dialogRef}
-            className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${isVisible ? "opacity-100" : "opacity-0"
+            className={`fixed inset-0 z-[110] flex items-center justify-center p-4 transition-opacity duration-200 ${isVisible ? "opacity-100" : "opacity-0"
                 }`}
             onClick={handleCancel}
             role="dialog"

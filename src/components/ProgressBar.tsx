@@ -139,7 +139,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ onAddTask }) => {
  
       {/* Celebration Confetti Effect */}
       {showCelebration && (
-        <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden bg-white/10">
+        <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden bg-white/5">
           {[...Array(30)].map((_, i) => (
             <div
               key={i}

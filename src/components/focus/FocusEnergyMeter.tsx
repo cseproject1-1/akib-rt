@@ -237,7 +237,7 @@ export const FocusEnergyMeter: React.FC<FocusEnergyMeterProps> = ({
                                     />
 
                                     {/* Tooltip */}
-                                    <div className="absolute bottom-full mb-2 hidden group-hover:block z-10">
+                                    <div className="absolute bottom-full mb-2 hidden group-hover:block z-20">
                                         <div className="bg-black/90 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
                                             {formatHour(pattern.hour)}:{" "}
                                             {pattern.averageFocusPercentage}%

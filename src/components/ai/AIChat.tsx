@@ -100,27 +100,26 @@ export const AIChat: React.FC = () => {
 
     // Size classes
     const sizeClasses = isFullscreen
-        ? "fixed inset-4 z-50 rounded-3xl"
-        : "fixed bottom-6 right-6 z-50 h-[550px] w-[420px] rounded-3xl";
+        ? "fixed inset-4 z-[80] rounded-3xl"
+        : "fixed bottom-6 right-6 z-[80] h-[550px] w-[420px] max-w-[calc(100vw-3rem)] rounded-3xl";
 
     if (!isOpen) {
         return (
             <>
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30 transition-all hover:scale-110 hover:shadow-xl hover:shadow-purple-500/40"
+                    className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30 transition-all hover:scale-110 hover:shadow-xl hover:shadow-purple-500/40"
                     aria-label="Open AI Assistant"
                 >
                     <Bot className="h-6 w-6" />
                 </button>
-                <ScheduleUploader isOpen={isUploaderOpen} onClose={() => setIsUploaderOpen(false)} />
             </>
         );
     }
 
     return (
         <>
-            <div className={`${sizeClasses} flex flex-col overflow-hidden border border-white/10 bg-background/95 shadow-2xl shadow-purple-500/10 backdrop-blur-xl`}>
+            <div className={`${sizeClasses} flex flex-col overflow-hidden border border-white/10 bg-background/95 shadow-2xl shadow-purple-500/10 backdrop-blur-lg`}>
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-white/5 bg-gradient-to-r from-purple-500/10 to-pink-500/10 px-4 py-3">
                     <div className="flex items-center gap-3">

@@ -89,7 +89,7 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
                 <div className="absolute left-6 top-0 bottom-0 w-1.5 bg-foreground/10" />
 
                 {/* Today Marker */}
-                <div className="absolute left-2.5 top-0 z-10 flex items-center">
+                <div className="absolute left-2.5 top-0 z-20 flex items-center">
                     <div className="h-8 w-8 clay-border bg-primary flex items-center justify-center shadow-none rounded-full">
                         <div className="h-3 w-3 bg-foreground" />
                     </div>
@@ -131,7 +131,7 @@ export const GoalTimeline = ({ goals, onGoalClick }: GoalTimelineProps) => {
                                 </div>
 
                                 {/* Goal Card */}
-                                <div className={`p-6 clay-border ${statusBg[status as keyof typeof statusBg]} transition-all group-hover:-translate-y-2 clay-shadow-sm group-hover:clay-shadow-lg shadow-none group-hover:shadow-none bg-black rounded-2xl`}>
+                                <div className={`p-6 clay-border ${statusBg[status as keyof typeof statusBg]} transition-all group-hover:-translate-y-2 group-hover:relative group-hover:z-10 clay-shadow-sm group-hover:clay-shadow-lg shadow-none group-hover:shadow-none bg-black rounded-2xl`}>
                                     <div className="flex items-start justify-between gap-6">
                                         <div className="flex-1 min-w-0">
                                             {/* Goal Title */}

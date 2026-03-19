@@ -257,24 +257,18 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           title="Notifications"
           description="Get reminded about your tasks before they start. Never miss a routine again."
         >
-          <SettingSection
-            icon={Bell}
-            title="Notifications"
-            description="Get reminded about your tasks before they start. Never miss a routine again."
-          >
-            <div className="w-full flex items-center justify-between">
-              <span className="text-sm font-medium text-foreground">Enable Task Reminders</span>
-              <ToggleSwitch
-                enabled={notificationPermission === "granted" && areNotificationsEnabled}
-                onChange={handleToggleNotifications}
-              />
-            </div>
-            {notificationPermission === "denied" && (
-              <p className="text-xs text-red-400 mt-2">
-                ⚠️ Notification permission is blocked in your browser settings. Please enable it manually to receive reminders.
-              </p>
-            )}
-          </SettingSection>
+          <div className="w-full flex items-center justify-between">
+            <span className="text-sm font-medium text-foreground">Enable Task Reminders</span>
+            <ToggleSwitch
+              enabled={notificationPermission === "granted" && areNotificationsEnabled}
+              onChange={handleToggleNotifications}
+            />
+          </div>
+          {notificationPermission === "denied" && (
+            <p className="text-xs text-red-400 mt-2">
+              ⚠️ Notification permission is blocked in your browser settings. Please enable it manually to receive reminders.
+            </p>
+          )}
         </SettingSection>
 
         <SettingSection

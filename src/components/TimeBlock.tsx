@@ -44,7 +44,7 @@ const TimeBlock: React.FC<TimeBlockProps> = ({ block, timeRange, onEditTask }) =
     <div className={`group flex flex-col h-full glass-card p-8 transition-all duration-200 hover:glass-shadow-lg relative`}>
       {/* Visual Marker for progress */}
       <div
-        className="absolute top-0 left-0 h-4 bg-primary/80 transition-all duration-1000 rounded-b-lg"
+        className="absolute top-0 left-0 h-4 bg-primary/80 transition-all duration-1000 rounded-b-lg z-[1]"
         style={{ width: `${progress}%` }}
       />
  

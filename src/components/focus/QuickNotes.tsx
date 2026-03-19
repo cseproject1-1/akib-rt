@@ -43,7 +43,7 @@ export const QuickNotes: React.FC<QuickNotesProps> = ({
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(true)}
-                className="fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30 flex items-center justify-center group hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300"
+                className="fixed bottom-24 right-6 z-40 h-14 w-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30 flex items-center justify-center group hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300"
                 title="Quick Capture (Ctrl+N)"
             >
                 <StickyNote className="h-6 w-6 group-hover:rotate-12 transition-transform" />

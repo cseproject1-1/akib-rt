@@ -148,7 +148,7 @@ export const FocusStats: React.FC<FocusStatsProps> = ({
 
                                     {/* Tooltip */}
                                     {day.minutes > 0 && (
-                                        <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                        <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
                                             <div className="bg-black/90 text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
                                                 {formatTime(day.minutes)}
                                             </div>
