@@ -49,14 +49,8 @@ const nextConfig: NextConfig = {
             value: "strict-origin-when-cross-origin",
           },
           {
-            // Allow rt-akib.gt.tc to embed this site in iframes
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' https://rt-akib.gt.tc https://*.rt-akib.gt.tc",
-          },
-          {
-            // X-Frame-Options fallback for older browsers (SAMEORIGIN allows same domain)
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
+            value: "frame-ancestors *",
           },
         ],
       },
