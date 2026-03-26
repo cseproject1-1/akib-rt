@@ -7,6 +7,8 @@ import { useNotification } from "@/context/NotificationContext";
 import { format, subMinutes, addMinutes, isAfter, isBefore } from "date-fns";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { safeNotification } from "@/lib/safeNotification";
+import { safeStorage } from "@/lib/safeStorage";
 
 
 export const NotificationManager: React.FC = () => {
@@ -18,10 +20,10 @@ export const NotificationManager: React.FC = () => {
 
     // Request notification permission on mount
     useEffect(() => {
-        if ("Notification" in window && Notification.permission === "default") {
+        if (safeNotification.isAvailable() && safeNotification.permission === "default") {
             // Delay permission request to not interrupt initial experience
             const timeout = setTimeout(() => {
-                Notification.requestPermission().then((permission) => {
+                safeNotification.requestPermission().then((permission) => {
                     if (permission === "granted") {
                         console.log("[Notifications] Permission granted");
                     }
@@ -52,7 +54,7 @@ export const NotificationManager: React.FC = () => {
         // Add to in-app notification center & show toast
         addNotification(title, body);
 
-        if (Notification.permission !== "granted") return;
+        if (!safeNotification.isGranted()) return;
 
         // Try service worker first (for offline support)
         if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
@@ -67,7 +69,7 @@ export const NotificationManager: React.FC = () => {
             });
         } else {
             // Fallback to regular notification
-            new Notification(title, {
+            safeNotification.show(title, {
                 body,
                 icon: "/logo.jpg",
                 tag
@@ -77,11 +79,11 @@ export const NotificationManager: React.FC = () => {
 
     // Schedule upcoming task notifications
     useEffect(() => {
-        if (!("Notification" in window) || Notification.permission !== "granted") return;
+        if (!safeNotification.isGranted()) return;
 
         let notificationsEnabled = false;
         try {
-            notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
+            notificationsEnabled = safeStorage.getItem("rt_notifications_enabled") === "true";
         } catch (e) { }
 
         if (!notificationsEnabled) return;
@@ -141,11 +143,11 @@ export const NotificationManager: React.FC = () => {
     // Check for missed notifications (real-time fallback)
     useEffect(() => {
         const checkTasks = () => {
-            if (Notification.permission !== "granted") return;
+            if (!safeNotification.isGranted()) return;
             // Check app-level preference
             let notificationsEnabled = false;
             try {
-                notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
+                notificationsEnabled = safeStorage.getItem("rt_notifications_enabled") === "true";
             } catch (error) {
                 // If localStorage is blocked, assume disabled or handle gracefully
             }
@@ -182,11 +184,11 @@ export const NotificationManager: React.FC = () => {
     useEffect(() => {
         const checkServerReminders = async () => {
             if (!user) return;
-            if (Notification.permission !== "granted") return;
+            if (!safeNotification.isGranted()) return;
 
             let notificationsEnabled = false;
             try {
-                notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
+                notificationsEnabled = safeStorage.getItem("rt_notifications_enabled") === "true";
             } catch (e) { }
             if (!notificationsEnabled) return;
 
@@ -242,8 +244,8 @@ export const NotificationManager: React.FC = () => {
             let notificationsEnabled = false;
             let lastMotivationDate = null;
             try {
-                notificationsEnabled = localStorage.getItem("rt_notifications_enabled") === "true";
-                lastMotivationDate = localStorage.getItem("lastMotivationDate");
+                notificationsEnabled = safeStorage.getItem("rt_notifications_enabled") === "true";
+                lastMotivationDate = safeStorage.getItem("lastMotivationDate");
             } catch (error) { }
 
             if (!notificationsEnabled) return;
@@ -264,7 +266,7 @@ export const NotificationManager: React.FC = () => {
                 if (!navigator.onLine) {
                     const randomMsg = offlineMotivations[Math.floor(Math.random() * offlineMotivations.length)];
                     showNotification("Daily Motivation ✨", randomMsg, "daily-motivation");
-                    localStorage.setItem("lastMotivationDate", today);
+                    safeStorage.setItem("lastMotivationDate", today);
                     return;
                 }
 
@@ -286,7 +288,7 @@ export const NotificationManager: React.FC = () => {
 
                 if (data.motivation) {
                     showNotification("Daily Motivation ✨", data.motivation, "daily-motivation");
-                    localStorage.setItem("lastMotivationDate", today);
+                    safeStorage.setItem("lastMotivationDate", today);
                 }
             } catch (error) {
                 console.error("Failed to get motivation:", error);
@@ -294,7 +296,7 @@ export const NotificationManager: React.FC = () => {
                 const randomMsg = offlineMotivations[Math.floor(Math.random() * offlineMotivations.length)];
                 showNotification("Daily Motivation ✨", randomMsg, "daily-motivation");
                 try {
-                    localStorage.setItem("lastMotivationDate", today);
+                    safeStorage.setItem("lastMotivationDate", today);
                 } catch (e) { }
             }
         };

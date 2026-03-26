@@ -10,6 +10,8 @@ import { Bell, Download, Upload, Trash2, LogOut, ShieldAlert, Database, Bot, Spa
 import { db } from "@/lib/firebase";
 import { doc, writeBatch, getDoc, updateDoc } from "firebase/firestore";
 import { useConfirm } from "./ui/ConfirmDialog";
+import { safeNotification } from "@/lib/safeNotification";
+import { safeStorage } from "@/lib/safeStorage";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -130,15 +132,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
 
   const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>("default");
   const [areNotificationsEnabled, setAreNotificationsEnabled] = useState(false);
+  const [notificationsSupported, setNotificationsSupported] = useState(false);
 
   useEffect(() => {
+    // Check if notifications are supported
+    const supported = safeNotification.isAvailable();
+    setNotificationsSupported(supported);
+
     // Check permission
-    if ("Notification" in window) {
-      setNotificationPermission(Notification.permission);
+    if (supported) {
+      setNotificationPermission(safeNotification.permission);
     }
     // Check app-level preference
     try {
-      const storedPref = localStorage.getItem("rt_notifications_enabled");
+      const storedPref = safeStorage.getItem("rt_notifications_enabled");
       setAreNotificationsEnabled(storedPref === "true");
     } catch (e) {
       setAreNotificationsEnabled(false);
@@ -148,15 +155,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const handleToggleNotifications = (enabled: boolean) => {
     if (enabled) {
       // User wants to ENABLE
-      if ("Notification" in window) {
-        Notification.requestPermission().then((permission) => {
+      if (notificationsSupported) {
+        safeNotification.requestPermission().then((permission) => {
           setNotificationPermission(permission);
           if (permission === "granted") {
             setAreNotificationsEnabled(true);
             try {
-              localStorage.setItem("rt_notifications_enabled", "true");
+              safeStorage.setItem("rt_notifications_enabled", "true");
             } catch (e) { }
-            new Notification("RT - Routine Tracker", { body: "Notifications enabled!" });
+            safeNotification.show("RT - Routine Tracker", { body: "Notifications enabled!" });
           }
         });
       }
@@ -164,7 +171,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       // User wants to DISABLE
       setAreNotificationsEnabled(false);
       try {
-        localStorage.setItem("rt_notifications_enabled", "false");
+        safeStorage.setItem("rt_notifications_enabled", "false");
       } catch (e) { }
     }
   };
