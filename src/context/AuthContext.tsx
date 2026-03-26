@@ -16,13 +16,18 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
   sendEmailVerification as firebaseSendEmailVerification,
   setPersistence,
-  browserLocalPersistence
+  browserLocalPersistence,
+  browserSessionPersistence,
+  inMemoryPersistence
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore"; // Import Firestore functions
 // Import our initialized auth instance and db
 import { auth, db } from "@/lib/firebase";
+// Import safe storage for iframe compatibility
+import { safeStorage } from "@/lib/safeStorage";
 
 // 1. DEFINE CONTEXT SHAPE
 // ----------------------------------------------------------------------------
@@ -40,8 +45,11 @@ interface AuthContextType {
 // Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Initialize Google Provider
+  // Initialize Google Provider
 const googleProvider = new GoogleAuthProvider();
+
+// Check if running inside an iframe
+const isIframe = typeof window !== "undefined" && window.self !== window.top;
 
 // 2. PROVIDER COMPONENT
 // ----------------------------------------------------------------------------
@@ -57,8 +65,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // This useEffect sets up a listener that runs whenever the user's sign-in state changes
   // (e.g. they login, logout, or the app refreshes and restores their session).
   useEffect(() => {
-    // CHECK FOR DEV MODE (Crytonix)
-    const isDevMode = localStorage.getItem("rt_dev_mode") === "true";
+    // CHECK FOR DEV MODE (Crytonix) - use safeStorage for iframe compatibility
+    const isDevMode = safeStorage.getItem("rt_dev_mode") === "true";
     if (isDevMode) {
       const devUser = {
         uid: "dev-crytonix",
@@ -79,13 +87,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     // Enforce local persistence (keep user logged in even after browser close)
-    // Enforce local persistence (keep user logged in even after browser close)
-    // Note: Some in-app browsers (like Messenger) might block localStorage/IndexedDB.
-    // In those cases, we fall back to session or memory persistence seamlessly or just catch the error.
-    setPersistence(auth, browserLocalPersistence)
+    // In iframes, IndexedDB is often blocked, so use memory persistence instead
+    const persistence = isIframe ? inMemoryPersistence : browserLocalPersistence;
+
+    setPersistence(auth, persistence)
       .catch((error) => {
-        console.warn("Auth Persistence Error (falling back to default):", error);
-        // We continue anyway; Firebase will standardly use temporary persistence if local fails
+        console.warn("Auth Persistence Error (falling back to memory):", error);
+        // If local persistence fails (common in iframes), fall back to memory persistence
+        return setPersistence(auth, inMemoryPersistence);
       })
       .then(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -162,7 +171,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setUser(devUser);
       setIsLoading(false);
-      localStorage.setItem("rt_dev_mode", "true");
+      safeStorage.setItem("rt_dev_mode", "true");
       return;
     }
 
@@ -200,7 +209,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const loginWithGoogle = async () => {
-    await signInWithPopup(auth, googleProvider);
+    // Use redirect instead of popup in iframes (popups are blocked)
+    if (isIframe) {
+      await signInWithRedirect(auth, googleProvider);
+    } else {
+      await signInWithPopup(auth, googleProvider);
+    }
   };
 
   const sendEmailVerification = async () => {
@@ -210,7 +224,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const logout = async () => {
-    localStorage.removeItem("rt_dev_mode");
+    safeStorage.removeItem("rt_dev_mode");
     setUser(null);
     await firebaseSignOut(auth);
   };
